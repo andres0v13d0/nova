@@ -1,4 +1,4 @@
-                                                                         **GRUPO 5**
+**GRUPO 5**
 
 **Tema:** Desarrollo de una plataforma de e-commerce para un pequeño negocio de tecnología.
 
