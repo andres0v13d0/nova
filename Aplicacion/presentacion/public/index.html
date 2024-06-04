@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>NOVA</title>
+    <style>
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px;
+        }
+        .form-group {
+            margin-bottom: 10px;
+        }
+        table {
+            margin-top: 20px;
+            border-collapse: collapse;
+            width: 80%;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>NOVA</h1>
+        <div>
+            <label for="table-select">Selecciona una tabla:</label>
+            <select id="table-select" onchange="loadColumnsAndRecords()">
+                <option value="">Seleccione una tabla</option>
+            </select>
+        </div>
+        <div id="form-container"></div>
+        <div id="table-container"></div>
+    </div>
+
+    <script>
+        const tableSelect = document.getElementById('table-select');
+        const formContainer = document.getElementById('form-container');
+        const tableContainer = document.getElementById('table-container');
+
+        window.onload = async function() {
+            const response = await fetch('/api/tables');
+            const tables = await response.json();
+            tables.forEach(table => {
+                const option = document.createElement('option');
+                option.value = table;
+                option.textContent = table;
+                tableSelect.appendChild(option);
+            });
+        };
+
+        async function loadColumnsAndRecords() {
+            const tableName = tableSelect.value;
+            if (!tableName) return;
+
+            const columnsResponse = await fetch(`/api/columns/${tableName}`);
+            const columns = await columnsResponse.json();
+            formContainer.innerHTML = `<h3>Ingresar datos en ${tableName}</h3>`;
+            columns.forEach(column => {
+                const formGroup = document.createElement('div');
+                formGroup.className = 'form-group';
+                formGroup.innerHTML = `
+                    <label for="${column}">${column}</label>
+                    <input type="text" id="${column}" name="${column}">
+                `;
+                formContainer.appendChild(formGroup);
+            });
+
+            const submitButton = document.createElement('button');
+            submitButton.textContent = 'Ingresar';
+            submitButton.onclick = () => createRecord(tableName, columns);
+            formContainer.appendChild(submitButton);
+
+            const recordsResponse = await fetch(`/api/records/${tableName}`);
+            const records = await recordsResponse.json();
+            tableContainer.innerHTML = `<h3>Datos en ${tableName}</h3>`;
+            const table = document.createElement('table');
+            const thead = document.createElement('thead');
+            const tbody = document.createElement('tbody');
+            const headerRow = document.createElement('tr');
+
+            columns.forEach(column => {
+                const th = document.createElement('th');
+                th.textContent = column;
+                headerRow.appendChild(th);
+            });
+
+            const actionsTh = document.createElement('th');
+            actionsTh.textContent = 'Acciones';
+            headerRow.appendChild(actionsTh);
+            thead.appendChild(headerRow);
+            table.appendChild(thead);
+
+            records.forEach(record => {
+                const row = document.createElement('tr');
+                columns.forEach(column => {
+                    const td = document.createElement('td');
+                    td.textContent = record[column];
+                    row.appendChild(td);
+                });
+                const actionsTd = document.createElement('td');
+                actionsTd.innerHTML = `
+                    <button onclick='editRecord("${tableName}", ${JSON.stringify(record)})'>Modificar</button>
+                    <button onclick='deleteRecord("${tableName}", "${record[columns[0]]}")'>Eliminar</button>
+                `;
+                row.appendChild(actionsTd);
+                tbody.appendChild(row);
+            });
+
+            table.appendChild(tbody);
+            tableContainer.appendChild(table);
+        }
+
+        async function createRecord(tableName, columns) {
+            const formData = {};
+            columns.forEach(column => {
+                formData[column] = document.getElementById(column).value;
+            });
+            await fetch(`/api/records/${tableName}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData),
+            });
+            loadColumnsAndRecords();
+        }
+
+        async function editRecord(tableName, record) {
+            const columns = Object.keys(record);
+            columns.forEach(column => {
+                document.getElementById(column).value = record[column];
+            });
+            const submitButton = document.querySelector('button');
+            submitButton.textContent = 'Modificar';
+            submitButton.onclick = () => updateRecord(tableName, record, columns);
+        }
+
+        async function updateRecord(tableName, record, columns) {
+            const formData = {};
+            columns.forEach(column => {
+                formData[column] = document.getElementById(column).value;
+            });
+            await fetch(`/api/records/${tableName}/${record[columns[0]]}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(formData),
+            });
+            loadColumnsAndRecords();
+        }
+
+        async function deleteRecord(tableName, id) {
+            await fetch(`/api/records/${tableName}/${id}`, {
+                method: 'DELETE',
+            });
+            loadColumnsAndRecords();
+        }
+    </script>
+</body>
+</html>
