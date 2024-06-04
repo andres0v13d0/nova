@@ -9,15 +9,11 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.INTEGER,
             allowNull: false
         },
-        monto: {
-            type: DataTypes.FLOAT,
+        precio: {
+            type: DataTypes.DECIMAL,
             allowNull: false
         },
-        metodo: {
-            type: DataTypes.STRING(50),
-            allowNull: false
-        },
-        fecha: {
+        fechapago: {
             type: DataTypes.DATE,
             allowNull: false
         }

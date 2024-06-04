@@ -18,6 +18,9 @@ const findOne = async (tableName, id) => {
 
 const create = async (tableName, data) => {
     try {
+        if (data.imagen) {
+            data.imagen = Buffer.from(data.imagen, 'base64');
+        }
         return await db[tableName].create(data);
     } catch (error) {
         throw new Error(`Error creating record in ${tableName}: ${error.message}`);
@@ -28,6 +31,9 @@ const update = async (tableName, id, data) => {
     try {
         const record = await findOne(tableName, id);
         if (record) {
+            if (data.imagen) {
+                data.imagen = Buffer.from(data.imagen, 'base64');
+            }
             return await record.update(data);
         } else {
             throw new Error(`Record not found in ${tableName} with id ${id}`);

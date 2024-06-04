@@ -8,6 +8,14 @@ module.exports = (sequelize, DataTypes) => {
         usuarioid: {
             type: DataTypes.INTEGER,
             allowNull: false
+        },
+        pedidoproductoid: {
+            type: DataTypes.INTEGER,
+            allowNull: false
+        },
+        fechacreacion: {
+            type: DataTypes.DATE,
+            allowNull: false
         }
     }, {
         tableName: 'carrito',

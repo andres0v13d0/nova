@@ -1,20 +1,28 @@
 module.exports = (sequelize, DataTypes) => {
     const InventarioProveedor = sequelize.define('inventarioproveedor', {
-        inventarioid: {
+        inventarioproveedorid: {
             type: DataTypes.INTEGER,
             primaryKey: true,
             autoIncrement: true
-        },
-        proveedorid: {
-            type: DataTypes.INTEGER,
-            allowNull: false
         },
         productoid: {
             type: DataTypes.INTEGER,
             allowNull: false
         },
-        cantidad: {
+        proveedorid: {
             type: DataTypes.INTEGER,
+            allowNull: false
+        },
+        cantidadsuministrada: {
+            type: DataTypes.INTEGER,
+            allowNull: false
+        },
+        precioentrega: {
+            type: DataTypes.DECIMAL,
+            allowNull: false
+        },
+        fechasuministro: {
+            type: DataTypes.DATE,
             allowNull: false
         }
     }, {

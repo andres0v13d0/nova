@@ -9,12 +9,12 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING(100),
             allowNull: false
         },
-        contacto: {
-            type: DataTypes.STRING(100),
-            allowNull: true
-        },
         telefono: {
             type: DataTypes.STRING(15),
+            allowNull: true
+        },
+        correoelectronico: {
+            type: DataTypes.STRING(100),
             allowNull: true
         }
     }, {

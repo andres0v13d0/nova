@@ -14,7 +14,7 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: true
         },
         precio: {
-            type: DataTypes.FLOAT,
+            type: DataTypes.DECIMAL,
             allowNull: false
         },
         categoriaid: {
@@ -22,8 +22,8 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false
         },
         imagen: {
-            type: DataTypes.STRING(255),
-            allowNull: false
+            type: DataTypes.BLOB,
+            allowNull: true
         }
     }, {
         tableName: 'producto',

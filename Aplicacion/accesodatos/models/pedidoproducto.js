@@ -1,17 +1,24 @@
 module.exports = (sequelize, DataTypes) => {
     const PedidoProducto = sequelize.define('pedidoproducto', {
-        pedidoid: {
+        pedidoproductoid: {
             type: DataTypes.INTEGER,
             primaryKey: true,
+            autoIncrement: true
+        },
+        pedidoid: {
+            type: DataTypes.INTEGER,
             allowNull: false
         },
         productoid: {
             type: DataTypes.INTEGER,
-            primaryKey: true,
             allowNull: false
         },
         cantidad: {
             type: DataTypes.INTEGER,
+            allowNull: false
+        },
+        precio: {
+            type: DataTypes.DECIMAL,
             allowNull: false
         }
     }, {

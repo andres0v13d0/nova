@@ -28,6 +28,9 @@
         th {
             background-color: #f2f2f2;
         }
+        .error {
+            color: red;
+        }
     </style>
 </head>
 <body>
@@ -41,12 +44,14 @@
         </div>
         <div id="form-container"></div>
         <div id="table-container"></div>
+        <div id="error-container" class="error"></div>
     </div>
 
     <script>
         const tableSelect = document.getElementById('table-select');
         const formContainer = document.getElementById('form-container');
         const tableContainer = document.getElementById('table-container');
+        const errorContainer = document.getElementById('error-container');
 
         window.onload = async function() {
             const response = await fetch('/api/tables');
@@ -63,109 +68,155 @@
             const tableName = tableSelect.value;
             if (!tableName) return;
 
-            const columnsResponse = await fetch(`/api/columns/${tableName}`);
-            const columns = await columnsResponse.json();
-            formContainer.innerHTML = `<h3>Ingresar datos en ${tableName}</h3>`;
-            columns.forEach(column => {
-                const formGroup = document.createElement('div');
-                formGroup.className = 'form-group';
-                formGroup.innerHTML = `
-                    <label for="${column}">${column}</label>
-                    <input type="text" id="${column}" name="${column}">
-                `;
-                formContainer.appendChild(formGroup);
-            });
+            try {
+                errorContainer.textContent = ''; 
 
-            const submitButton = document.createElement('button');
-            submitButton.textContent = 'Ingresar';
-            submitButton.onclick = () => createRecord(tableName, columns);
-            formContainer.appendChild(submitButton);
+                const columnsResponse = await fetch(`/api/columns/${tableName}`);
+                if (!columnsResponse.ok) throw new Error(await columnsResponse.text());
+                const columns = await columnsResponse.json();
 
-            const recordsResponse = await fetch(`/api/records/${tableName}`);
-            const records = await recordsResponse.json();
-            tableContainer.innerHTML = `<h3>Datos en ${tableName}</h3>`;
-            const table = document.createElement('table');
-            const thead = document.createElement('thead');
-            const tbody = document.createElement('tbody');
-            const headerRow = document.createElement('tr');
-
-            columns.forEach(column => {
-                const th = document.createElement('th');
-                th.textContent = column;
-                headerRow.appendChild(th);
-            });
-
-            const actionsTh = document.createElement('th');
-            actionsTh.textContent = 'Acciones';
-            headerRow.appendChild(actionsTh);
-            thead.appendChild(headerRow);
-            table.appendChild(thead);
-
-            records.forEach(record => {
-                const row = document.createElement('tr');
+                formContainer.innerHTML = `<h3>Ingresar datos en ${tableName}</h3>`;
                 columns.forEach(column => {
-                    const td = document.createElement('td');
-                    td.textContent = record[column];
-                    row.appendChild(td);
+                    const formGroup = document.createElement('div');
+                    formGroup.className = 'form-group';
+                    if (column === 'imagen') {
+                        formGroup.innerHTML = `
+                            <label for="${column}">${column}</label>
+                            <input type="file" id="${column}" name="${column}">
+                        `;
+                    } else {
+                        formGroup.innerHTML = `
+                            <label for="${column}">${column}</label>
+                            <input type="text" id="${column}" name="${column}">
+                        `;
+                    }
+                    formContainer.appendChild(formGroup);
                 });
-                const actionsTd = document.createElement('td');
-                actionsTd.innerHTML = `
-                    <button onclick='editRecord("${tableName}", ${JSON.stringify(record)})'>Modificar</button>
-                    <button onclick='deleteRecord("${tableName}", "${record[columns[0]]}")'>Eliminar</button>
-                `;
-                row.appendChild(actionsTd);
-                tbody.appendChild(row);
-            });
 
-            table.appendChild(tbody);
-            tableContainer.appendChild(table);
+                const submitButton = document.createElement('button');
+                submitButton.textContent = 'Ingresar';
+                submitButton.onclick = () => createRecord(tableName, columns);
+                formContainer.appendChild(submitButton);
+
+                const recordsResponse = await fetch(`/api/records/${tableName}`);
+                if (!recordsResponse.ok) throw new Error(await recordsResponse.text());
+                const records = await recordsResponse.json();
+
+                tableContainer.innerHTML = `<h3>Datos en ${tableName}</h3>`;
+                const table = document.createElement('table');
+                const thead = document.createElement('thead');
+                const tbody = document.createElement('tbody');
+                const headerRow = document.createElement('tr');
+
+                columns.forEach(column => {
+                    const th = document.createElement('th');
+                    th.textContent = column;
+                    headerRow.appendChild(th);
+                });
+
+                const actionsTh = document.createElement('th');
+                actionsTh.textContent = 'Acciones';
+                headerRow.appendChild(actionsTh);
+                thead.appendChild(headerRow);
+                table.appendChild(thead);
+
+                records.forEach(record => {
+                    const row = document.createElement('tr');
+                    columns.forEach(column => {
+                        const td = document.createElement('td');
+                        if (column === 'imagen' && record[column]) {
+                            const img = document.createElement('img');
+                            img.src = `data:image/png;base64,${record[column]}`;
+                            img.width = 100;
+                            td.appendChild(img);
+                        } else {
+                            td.textContent = record[column];
+                        }
+                        row.appendChild(td);
+                    });
+                    const actionsTd = document.createElement('td');
+                    actionsTd.innerHTML = `
+                        <button onclick='editRecord("${tableName}", ${JSON.stringify(record)})'>Modificar</button>
+                        <button onclick='deleteRecord("${tableName}", "${record[columns[0]]}")'>Eliminar</button>
+                    `;
+                    row.appendChild(actionsTd);
+                    tbody.appendChild(row);
+                });
+
+                table.appendChild(tbody);
+                tableContainer.appendChild(table);
+            } catch (error) {
+                errorContainer.textContent = error.message;
+            }
         }
 
         async function createRecord(tableName, columns) {
-            const formData = {};
-            columns.forEach(column => {
-                formData[column] = document.getElementById(column).value;
-            });
-            await fetch(`/api/records/${tableName}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(formData),
-            });
-            loadColumnsAndRecords();
+            try {
+                const formData = new FormData();
+                columns.forEach(column => {
+                    const input = document.getElementById(column);
+                    if (input.type === 'file') {
+                        formData.append(column, input.files[0]);
+                    } else {
+                        formData.append(column, input.value);
+                    }
+                });
+                const response = await fetch(`/api/records/${tableName}`, {
+                    method: 'POST',
+                    body: formData
+                });
+                if (!response.ok) throw new Error(await response.text());
+                loadColumnsAndRecords();
+            } catch (error) {
+                errorContainer.textContent = error.message;
+            }
         }
 
-        async function editRecord(tableName, record) {
-            const columns = Object.keys(record);
+        function editRecord(tableName, record) {
             columns.forEach(column => {
-                document.getElementById(column).value = record[column];
+                if (column === 'imagen') {
+                    document.getElementById(column).value = '';
+                } else {
+                    document.getElementById(column).value = record[column];
+                }
             });
-            const submitButton = document.querySelector('button');
-            submitButton.textContent = 'Modificar';
-            submitButton.onclick = () => updateRecord(tableName, record, columns);
+
+            const submitButton = document.createElement('button');
+            submitButton.textContent = 'Actualizar';
+            submitButton.onclick = () => updateRecord(tableName, record[columns[0]]);
+            formContainer.appendChild(submitButton);
         }
 
-        async function updateRecord(tableName, record, columns) {
-            const formData = {};
-            columns.forEach(column => {
-                formData[column] = document.getElementById(column).value;
-            });
-            await fetch(`/api/records/${tableName}/${record[columns[0]]}`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(formData),
-            });
-            loadColumnsAndRecords();
+        async function updateRecord(tableName, id) {
+            try {
+                const formData = new FormData();
+                columns.forEach(column => {
+                    const input = document.getElementById(column);
+                    if (input.type === 'file' && input.files.length > 0) {
+                        formData.append(column, input.files[0]);
+                    } else {
+                        formData.append(column, input.value);
+                    }
+                });
+                const response = await fetch(`/api/records/${tableName}/${id}`, {
+                    method: 'PUT',
+                    body: formData
+                });
+                if (!response.ok) throw new Error(await response.text());
+                loadColumnsAndRecords();
+            } catch (error) {
+                errorContainer.textContent = error.message;
+            }
         }
 
         async function deleteRecord(tableName, id) {
-            await fetch(`/api/records/${tableName}/${id}`, {
-                method: 'DELETE',
-            });
-            loadColumnsAndRecords();
+            try {
+                const response = await fetch(`/api/records/${tableName}/${id}`, { method: 'DELETE' });
+                if (!response.ok) throw new Error(await response.text());
+                loadColumnsAndRecords();
+            } catch (error) {
+                errorContainer.textContent = error.message;
+            }
         }
     </script>
 </body>

@@ -9,8 +9,8 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.INTEGER,
             allowNull: false
         },
-        fecha: {
-            type: DataTypes.STRING(255),
+        fechapedido: {
+            type: DataTypes.DATE,
             allowNull: false
         },
         estado: {
@@ -18,7 +18,7 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false
         },
         total: {
-            type: DataTypes.FLOAT,
+            type: DataTypes.DECIMAL,
             allowNull: false
         }
     }, {

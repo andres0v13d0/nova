@@ -5,7 +5,11 @@ module.exports = (sequelize, DataTypes) => {
             primaryKey: true,
             autoIncrement: true
         },
-        usuarioid: {
+        pedidoid: {
+            type: DataTypes.INTEGER,
+            allowNull: false
+        },
+        calificacion: {
             type: DataTypes.INTEGER,
             allowNull: false
         },
@@ -13,8 +17,8 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING(255),
             allowNull: true
         },
-        calificacion: {
-            type: DataTypes.INTEGER,
+        fecha: {
+            type: DataTypes.DATE,
             allowNull: false
         }
     }, {
