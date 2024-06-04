@@ -173,6 +173,7 @@
         }
 
         function editRecord(tableName, record) {
+            const columns = Object.keys(record);
             columns.forEach(column => {
                 if (column === 'imagen') {
                     document.getElementById(column).value = '';
@@ -181,13 +182,12 @@
                 }
             });
 
-            const submitButton = document.createElement('button');
+            const submitButton = document.querySelector('button');
             submitButton.textContent = 'Actualizar';
-            submitButton.onclick = () => updateRecord(tableName, record[columns[0]]);
-            formContainer.appendChild(submitButton);
+            submitButton.onclick = () => updateRecord(tableName, record[columns[0]], columns);
         }
 
-        async function updateRecord(tableName, id) {
+        async function updateRecord(tableName, id, columns) {
             try {
                 const formData = new FormData();
                 columns.forEach(column => {
