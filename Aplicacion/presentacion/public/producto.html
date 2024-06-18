@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Detalles del Producto</title>
+    <style>
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px;
+        }
+        .product-card {
+            border: 1px solid #ccc;
+            padding: 20px;
+            margin: 20px;
+            width: 300px;
+        }
+        .product-card img {
+            max-width: 100%;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0,0,0);
+            background-color: rgba(0,0,0,0.4);
+            padding-top: 60px;
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 500px;
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Detalles del Producto</h1>
+        <div class="product-card" id="product-card">
+            <!-- Detalles del producto se cargarán aquí -->
+        </div>
+        <button onclick="completarCompra()">Completar Compra</button>
+    </div>
+
+    <div id="feedback-modal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>Califique su experiencia</h2>
+            <div class="form-group">
+                <label for="calificacion">Calificación:</label>
+                <input type="number" id="calificacion" min="1" max="5">
+            </div>
+            <div class="form-group">
+                <label for="comentario">Comentario:</label>
+                <textarea id="comentario"></textarea>
+            </div>
+            <button onclick="enviarFeedback()">Calificar</button>
+            <div id="error-container" class="error"></div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const productCard = document.getElementById('product-card');
+            try {
+                const response = await fetch('/api/records/producto/1'); // Obtener el primer producto
+                const product = await response.json();
+
+                if (!product || !product.productoid) {
+                    productCard.innerHTML = `<p>Producto no encontrado.</p>`;
+                } else {
+                    productCard.innerHTML = `
+                        <img src="data:image/png;base64,${product.imagen}">
+                        <h2>${product.nombre}</h2>
+                        <p>${product.descripcion}</p>
+                        <p>Precio: $${product.precio}</p>
+                        <p>Cantidad en stock: ${product.cantidadstock}</p>
+                    `;
+                }
+            } catch (error) {
+                productCard.innerHTML = `<p>Error al cargar el producto: ${error.message}</p>`;
+            }
+        });
+
+        function completarCompra() {
+            // Simula la lógica de completar compra y reduce el stock del producto
+            // Luego, abre la ventana modal para calificar la experiencia
+            const modal = document.getElementById('feedback-modal');
+            modal.style.display = "block";
+        }
+
+        function closeModal() {
+            const modal = document.getElementById('feedback-modal');
+            modal.style.display = "none";
+        }
+
+        async function enviarFeedback() {
+            const calificacion = document.getElementById('calificacion').value;
+            const comentario = document.getElementById('comentario').value;
+            const errorContainer = document.getElementById('error-container');
+
+            try {
+                const response = await fetch('/feedback/feedback', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ pedidoid: 1, calificacion: calificacion, comentario: comentario, fecha: new Date() })
+                });
+                if (!response.ok) throw new Error(await response.text());
+                alert('Feedback enviado exitosamente');
+                closeModal();
+            } catch (error) {
+                errorContainer.textContent = error.message;
+            }
+        }
+    </script>
+</body>
+</html>

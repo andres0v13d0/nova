@@ -1,7 +1,7 @@
 const express = require('express');
 const multer = require('multer');
 const router = express.Router();
-const ejemploService = require('../../logica/services/ejemploServices');
+const ejemploService = require('../../logica/services/ejemploService');
 
 const upload = multer({
   storage: multer.memoryStorage(),

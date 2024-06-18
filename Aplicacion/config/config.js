@@ -5,12 +5,5 @@ module.exports = {
         database: "novabd",
         host: "localhost",
         dialect: "postgres"
-    },
-    production: {
-        username: "your_mysql_user",
-        password: "your_mysql_password",
-        database: "your_database",
-        host: "localhost",
-        dialect: "mysql"
     }
 };

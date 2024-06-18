@@ -8,6 +8,8 @@ app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'presentacion/public')));
 
 app.use('/api', require('./presentacion/routes/api'));
+app.use('/ventas', require('./presentacion/routes/ventas'));
+app.use('/feedback', require('./presentacion/routes/feedback'));
 
 const PORT = process.env.PORT || 3000;
 models.sequelize.sync().then(() => {

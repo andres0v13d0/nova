@@ -17,6 +17,10 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.DECIMAL,
             allowNull: false
         },
+        cantidadstock: {
+            type: DataTypes.DECIMAL,
+            allowNull: false
+        },
         categoriaid: {
             type: DataTypes.INTEGER,
             allowNull: false
