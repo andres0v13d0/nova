@@ -10,6 +10,7 @@ app.use(express.static(path.join(__dirname, 'presentacion/public')));
 app.use('/api', require('./presentacion/routes/api'));
 app.use('/ventas', require('./presentacion/routes/ventas'));
 app.use('/feedback', require('./presentacion/routes/feedback'));
+//app.use('/inventario', require('./presentacion/routes/inventario'));
 
 const PORT = process.env.PORT || 3000;
 models.sequelize.sync().then(() => {
