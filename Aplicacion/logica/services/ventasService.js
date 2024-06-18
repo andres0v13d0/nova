@@ -3,17 +3,17 @@ const db = require('../../accesodatos');
 const registrarVenta = async (ventaData) => {
     const transaction = await db.sequelize.transaction();
     try {
-        const pedido = await db.Pedido.create(ventaData.pedido, { transaction });
+        const pedido = await db.pedido.create(ventaData.pedido, { transaction });
         const detalles = await Promise.all(ventaData.productos.map(async (producto) => {
-            const pedidoProducto = await db.PedidoProducto.create({
-                PedidoID: pedido.PedidoID,
-                ProductoID: producto.ProductoID,
-                Cantidad: producto.Cantidad,
-                Precio: producto.Precio,
+            const pedidoProducto = await db.pedidoproducto.create({
+                pedidoid: pedido.pedidoid,
+                productoid: producto.productoid,
+                cantidad: producto.cantidad,
+                precio: producto.precio,
             }, { transaction });
 
-            const productoActualizado = await db.Producto.findByPk(producto.ProductoID, { transaction });
-            productoActualizado.CantidadStock -= producto.Cantidad;
+            const productoActualizado = await db.producto.findByPk(producto.productoid, { transaction });
+            productoActualizado.cantidadstock -= producto.cantidad;
             await productoActualizado.save({ transaction });
 
             return pedidoProducto;

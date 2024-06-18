@@ -81,6 +81,8 @@
     </div>
 
     <script>
+        let currentProduct = null;  // Variable global para almacenar el producto actual
+
         document.addEventListener('DOMContentLoaded', async () => {
             const productCard = document.getElementById('product-card');
             try {
@@ -90,11 +92,12 @@
                 if (!product || !product.productoid) {
                     productCard.innerHTML = `<p>Producto no encontrado.</p>`;
                 } else {
+                    currentProduct = product;  // Asignar el producto actual a la variable global
                     productCard.innerHTML = `
                         <img src="data:image/png;base64,${product.imagen}">
                         <h2>${product.nombre}</h2>
                         <p>${product.descripcion}</p>
-                        <p>Precio: $${product.precio}</p>
+                        <p>Precio: ${product.precio}</p>
                         <p>Cantidad en stock: ${product.cantidadstock}</p>
                     `;
                 }
@@ -103,11 +106,45 @@
             }
         });
 
-        function completarCompra() {
-            // Simula la lógica de completar compra y reduce el stock del producto
-            // Luego, abre la ventana modal para calificar la experiencia
-            const modal = document.getElementById('feedback-modal');
-            modal.style.display = "block";
+        async function completarCompra() {
+            if (!currentProduct) {
+                alert('Producto no disponible');
+                return;
+            }
+
+            try {
+                const ventaData = {
+                    pedido: {
+                        usuarioid: 1,
+                        fechapedido: new Date(),
+                        estado: 'completado',
+                        total: parseFloat(currentProduct.precio)
+                    },
+                    productos: [
+                        {
+                            productoid: currentProduct.productoid,
+                            cantidad: 1,
+                            precio: parseFloat(currentProduct.precio)
+                        }
+                    ]
+                };
+
+                const response = await fetch('/ventas/venta', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(ventaData)
+                });
+
+                if (!response.ok) throw new Error(await response.text());
+
+                // Mostrar la ventana modal para calificar la experiencia
+                const modal = document.getElementById('feedback-modal');
+                modal.style.display = "block";
+            } catch (error) {
+                alert('Error al completar la compra: ' + error.message);
+            }
         }
 
         function closeModal() {
