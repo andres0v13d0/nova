@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const path = require('path');
 const models = require('./accesodatos');
+const dotenv = require('dotenv').config();
 
 const app = express();
 app.use(bodyParser.json());
@@ -15,6 +16,8 @@ app.use('/inventario', require('./presentacion/routes/inventario'));
 app.use('/catalogo', require('./presentacion/routes/catalogo'));
 app.use('/reportes', require('./presentacion/routes/reportes'));
 app.use('/proveedores', require('./presentacion/routes/proveedores'));
+app.use('/asistente', require('./presentacion/routes/asistente')); 
+app.use('/producto', require('./presentacion/routes/producto'));
 
 
 app.get('/oauth2callback', (req, res) => {

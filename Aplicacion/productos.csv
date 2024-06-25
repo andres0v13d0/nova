@@ -1,0 +1,4 @@
+"productoid","nombre","descripcion","precio","cantidadstock","categoriaid","imagen"
+3,"Camiseta","Camiseta de algodón",20,178,2,"{""type"":""Buffer"",""data"":[105,109,97,103,101,110,51,46,112,110,103]}"
+1,"Teléfono Móvil","Smartphone de última generación",500,92,1,"{""type"":""Buffer"",""data"":[105,109,97,103,101,110,49,46,112,110,103]}"
+2,"Laptop","Laptop potente para juegos",1200,43,1,"{""type"":""Buffer"",""data"":[105,109,97,103,101,110,50,46,112,110,103]}"
