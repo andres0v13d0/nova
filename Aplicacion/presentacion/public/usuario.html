@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Usuario</title>
+    <style>
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Bienvenido, <span id="usuario-nombre"></span></h1>
+        <p>Funcionalidades para realizar compras</p>
+        <button onclick="cerrarSesion()">Cerrar Sesión</button>
+        <button onclick="location.href='actualizar.html'">Actualizar Información</button>
+        <button onclick="location.href='catalogo.html'">Catálogo de Productos</button>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const nombre = localStorage.getItem('usuarioNombre');
+            document.getElementById('usuario-nombre').textContent = nombre;
+        });
+
+        function cerrarSesion() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('usuarioId');
+            localStorage.removeItem('usuarioNombre');
+            window.location.href = '/registro.html';
+        }
+    </script>
+</body>
+</html>

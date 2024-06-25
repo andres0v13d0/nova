@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestión de Inventario</title>
+    <style>
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px;
+        }
+        .form-group {
+            margin-bottom: 10px;
+        }
+        table {
+            margin-top: 20px;
+            border-collapse: collapse;
+            width: 80%;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Gestión de Inventario</h1>
+        <div>
+            <button onclick="mostrarFormularioAgregar()">Agregar Producto</button>
+        </div>
+        <div id="form-container"></div>
+        <div id="table-container"></div>
+        <div id="error-container" class="error"></div>
+    </div>
+
+    <script>
+        const formContainer = document.getElementById('form-container');
+        const tableContainer = document.getElementById('table-container');
+        const errorContainer = document.getElementById('error-container');
+
+        document.addEventListener('DOMContentLoaded', cargarProductos);
+
+        async function cargarProductos() {
+            try {
+                const response = await fetch('/inventario/productos');
+                const productos = await response.json();
+
+                if (!productos.length) {
+                    tableContainer.innerHTML = '<p>No hay productos en el inventario.</p>';
+                    return;
+                }
+
+                const table = document.createElement('table');
+                const thead = document.createElement('thead');
+                const tbody = document.createElement('tbody');
+                const headerRow = document.createElement('tr');
+
+                const columns = ['Nombre', 'Descripción', 'Precio', 'CantidadStock', 'Imagen', 'Acciones'];
+                columns.forEach(column => {
+                    const th = document.createElement('th');
+                    th.textContent = column;
+                    headerRow.appendChild(th);
+                });
+
+                thead.appendChild(headerRow);
+                table.appendChild(thead);
+
+                productos.forEach(producto => {
+                    const row = document.createElement('tr');
+                    columns.forEach(column => {
+                        const td = document.createElement('td');
+                        if (column === 'Imagen') {
+                            if (producto.imagen) {
+                                const img = document.createElement('img');
+                                img.src = `data:image/png;base64,${producto.imagen}`;
+                                img.width = 100;
+                                td.appendChild(img);
+                            }
+                        } else if (column === 'Acciones') {
+                            td.innerHTML = `
+                                <button onclick='mostrarFormularioModificar(${JSON.stringify(producto)})'>Modificar</button>
+                                <button onclick='eliminarProducto(${producto.productoid})'>Eliminar</button>
+                            `;
+                        } else {
+                            td.textContent = producto[column.toLowerCase()];
+                        }
+                        row.appendChild(td);
+                    });
+                    tbody.appendChild(row);
+                });
+
+                table.appendChild(tbody);
+                tableContainer.innerHTML = '';
+                tableContainer.appendChild(table);
+            } catch (error) {
+                errorContainer.textContent = error.message;
+            }
+        }
+
+        function mostrarFormularioAgregar() {
+            formContainer.innerHTML = `
+                <h2>Agregar Producto</h2>
+                <div class="form-group">
+                    <label for="nombre">Nombre:</label>
+                    <input type="text" id="nombre">
+                </div>
+                <div class="form-group">
+                    <label for="descripcion">Descripción:</label>
+                    <textarea id="descripcion"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="precio">Precio:</label>
+                    <input type="number" id="precio" step="0.01">
+                </div>
+                <div class="form-group">
+                    <label for="cantidadstock">Cantidad en stock:</label>
+                    <input type="number" id="cantidadstock">
+                </div>
+                <div class="form-group">
+                    <label for="imagen">Imagen:</label>
+                    <input type="file" id="imagen">
+                </div>
+                <button onclick="agregarProducto()">Agregar</button>
+            `;
+        }
+
+        async function agregarProducto() {
+            const nombre = document.getElementById('nombre').value;
+            const descripcion = document.getElementById('descripcion').value;
+            const precio = document.getElementById('precio').value;
+            const cantidadstock = document.getElementById('cantidadstock').value;
+            const imagen = document.getElementById('imagen').files[0];
+
+            const formData = new FormData();
+            formData.append('nombre', nombre);
+            formData.append('descripcion', descripcion);
+            formData.append('precio', precio);
+            formData.append('cantidadstock', cantidadstock);
+            if (imagen) {
+                formData.append('imagen', imagen);
+            }
+
+            try {
+                const response = await fetch('/inventario/productos', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    throw new Error(await response.text());
+                }
+
+                cargarProductos();
+                formContainer.innerHTML = '';
+            } catch (error) {
+                errorContainer.textContent = error.message;
+            }
+        }
+
+        function mostrarFormularioModificar(producto) {
+            formContainer.innerHTML = `
+                <h2>Modificar Producto</h2>
+                <div class="form-group">
+                    <label for="nombre">Nombre:</label>
+                    <input type="text" id="nombre" value="${producto.nombre}">
+                </div>
+                <div class="form-group">
+                    <label for="descripcion">Descripción:</label>
+                    <textarea id="descripcion">${producto.descripcion}</textarea>
+                </div>
+                <div class="form-group">
+                    <label for="precio">Precio:</label>
+                    <input type="number" id="precio" step="0.01" value="${producto.precio}">
+                </div>
+                <div class="form-group">
+                    <label for="cantidadstock">Cantidad en stock:</label>
+                    <input type="number" id="cantidadstock" value="${producto.cantidadstock}">
+                </div>
+                <div class="form-group">
+                    <label for="imagen">Imagen:</label>
+                    <input type="file" id="imagen">
+                </div>
+                <button onclick="modificarProducto(${producto.productoid})">Modificar</button>
+            `;
+        }
+
+        async function modificarProducto(productoid) {
+            const nombre = document.getElementById('nombre').value;
+            const descripcion = document.getElementById('descripcion').value;
+            const precio = document.getElementById('precio').value;
+            const cantidadstock = document.getElementById('cantidadstock').value;
+            const imagen = document.getElementById('imagen').files[0];
+
+            const formData = new FormData();
+            formData.append('nombre', nombre);
+            formData.append('descripcion', descripcion);
+            formData.append('precio', precio);
+            formData.append('cantidadstock', cantidadstock);
+            if (imagen) {
+                formData.append('imagen', imagen);
+            }
+
+            try {
+                const response = await fetch(`/inventario/productos/${productoid}`, {
+                    method: 'PUT',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    throw new Error(await response.text());
+                }
+
+                cargarProductos();
+                formContainer.innerHTML = '';
+            } catch (error) {
+                errorContainer.textContent = error.message;
+            }
+        }
+
+        async function eliminarProducto(productoid) {
+            try {
+                const response = await fetch(`/inventario/productos/${productoid}`, {
+                    method: 'DELETE'
+                });
+
+                if (!response.ok) {
+                    throw new Error(await response.text());
+                }
+
+                cargarProductos();
+            } catch (error) {
+                errorContainer.textContent = error.message;
+            }
+        }
+    </script>
+</body>
+</html>

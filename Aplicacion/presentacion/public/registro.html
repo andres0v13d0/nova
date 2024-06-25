@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Registro e Inicio de Sesión</title>
+    <style>
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px;
+        }
+        .form-group {
+            margin-bottom: 10px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .form-group input {
+            padding: 5px;
+            width: 100%;
+        }
+        .form-group button {
+            padding: 10px;
+        }
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Registro</h1>
+        <div class="form-group">
+            <label for="nombre">Nombre:</label>
+            <input type="text" id="nombre" name="nombre">
+        </div>
+        <div class="form-group">
+            <label for="apellido">Apellido:</label>
+            <input type="text" id="apellido" name="apellido">
+        </div>
+        <div class="form-group">
+            <label for="correo">Correo Electrónico:</label>
+            <input type="email" id="correo" name="correo">
+        </div>
+        <div class="form-group">
+            <label for="contrasena">Contraseña:</label>
+            <input type="password" id="contrasena" name="contrasena">
+        </div>
+        <div class="form-group">
+            <label for="direccion">Dirección:</label>
+            <input type="text" id="direccion" name="direccion">
+        </div>
+        <div class="form-group">
+            <label for="telefono">Teléfono:</label>
+            <input type="text" id="telefono" name="telefono">
+        </div>
+        <div class="form-group">
+            <button onclick="registrar()">Registrar</button>
+        </div>
+        <div id="registro-error" class="error"></div>
+        <hr>
+        <h1>Inicio de Sesión</h1>
+        <div class="form-group">
+            <label for="login-correo">Correo Electrónico:</label>
+            <input type="email" id="login-correo" name="login-correo">
+        </div>
+        <div class="form-group">
+            <label for="login-contrasena">Contraseña:</label>
+            <input type="password" id="login-contrasena" name="login-contrasena">
+        </div>
+        <div class="form-group">
+            <button onclick="iniciarSesion()">Iniciar Sesión</button>
+        </div>
+        <div id="login-error" class="error"></div>
+        <hr>
+        <h1>Recuperar Contraseña</h1>
+        <div class="form-group">
+            <label for="recuperar-correo">Correo Electrónico:</label>
+            <input type="email" id="recuperar-correo" name="recuperar-correo">
+        </div>
+        <div class="form-group">
+            <button onclick="recuperarContrasena()">Recuperar Contraseña</button>
+        </div>
+        <div id="recuperar-error" class="error"></div>
+        <hr>
+        <h1>Verificar Código</h1>
+        <div class="form-group">
+            <label for="verificar-correo">Correo Electrónico:</label>
+            <input type="email" id="verificar-correo" name="verificar-correo">
+        </div>
+        <div class="form-group">
+            <label for="verificar-codigo">Código de Verificación:</label>
+            <input type="text" id="verificar-codigo" name="verificar-codigo">
+        </div>
+        <div class="form-group">
+            <button onclick="verificarCodigo()">Verificar Código</button>
+        </div>
+        <div id="verificar-error" class="error"></div>
+        <hr>
+        <h1>Establecer Nueva Contraseña</h1>
+        <div class="form-group">
+            <label for="nueva-contrasena">Nueva Contraseña:</label>
+            <input type="password" id="nueva-contrasena" name="nueva-contrasena">
+        </div>
+        <div class="form-group">
+            <button onclick="establecerNuevaContrasena()">Establecer Nueva Contraseña</button>
+        </div>
+        <div id="nueva-contrasena-error" class="error"></div>
+    </div>
+
+    <script>
+        async function registrar() {
+            const nombre = document.getElementById('nombre').value;
+            const apellido = document.getElementById('apellido').value;
+            const correo = document.getElementById('correo').value;
+            const contrasena = document.getElementById('contrasena').value;
+            const direccion = document.getElementById('direccion').value;
+            const telefono = document.getElementById('telefono').value;
+            const rol = "cliente";
+
+            try {
+                const response = await fetch('/usuario/registro', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ nombre, apellido, correoelectronico: correo, contrasena, direccion, telefono, rol })
+                });
+
+                if (!response.ok) throw new Error(await response.text());
+
+                alert('Registro exitoso. Revisa tu correo para el código de confirmación.');
+            } catch (error) {
+                document.getElementById('registro-error').textContent = error.message;
+            }
+        }
+
+        async function iniciarSesion() {
+            const correo = document.getElementById('login-correo').value;
+            const contrasena = document.getElementById('login-contrasena').value;
+
+            try {
+                const response = await fetch('/usuario/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ correoelectronico: correo, contrasena })
+                });
+
+                if (!response.ok) throw new Error(await response.text());
+
+                const data = await response.json();
+                localStorage.setItem('token', data.token);
+                localStorage.setItem('usuarioId', data.usuario.usuarioid);
+                localStorage.setItem('usuarioNombre', data.usuario.nombre);
+
+                if (data.usuario.rol === 'administrador') {
+                    window.location.href = '/admin.html';
+                } else {
+                    window.location.href = '/usuario.html';
+                }
+            } catch (error) {
+                document.getElementById('login-error').textContent = error.message;
+            }
+        }
+
+        async function recuperarContrasena() {
+            const correo = document.getElementById('recuperar-correo').value;
+
+            try {
+                const response = await fetch('/usuario/recuperar-contrasena', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ correoelectronico: correo })
+                });
+
+                if (!response.ok) throw new Error(await response.text());
+
+                alert('Revisa tu correo para el código de recuperación.');
+            } catch (error) {
+                document.getElementById('recuperar-error').textContent = error.message;
+            }
+        }
+
+        async function verificarCodigo() {
+            const correo = document.getElementById('verificar-correo').value;
+            const codigo = document.getElementById('verificar-codigo').value;
+
+            try {
+                const response = await fetch('/usuario/verificar-codigo', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ correoelectronico: correo, codigo })
+                });
+
+                if (!response.ok) throw new Error(await response.text());
+
+                alert('Código verificado correctamente.');
+            } catch (error) {
+                document.getElementById('verificar-error').textContent = error.message;
+            }
+        }
+
+        async function establecerNuevaContrasena() {
+            const correo = document.getElementById('verificar-correo').value;  // Usar el mismo campo de correo
+            const nuevaContrasena = document.getElementById('nueva-contrasena').value;
+
+            try {
+                const response = await fetch('/usuario/establecer-nueva-contrasena', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ correoelectronico: correo, nuevaContrasena })
+                });
+
+                if (!response.ok) throw new Error(await response.text());
+
+                alert('Contraseña actualizada exitosamente.');
+            } catch (error) {
+                document.getElementById('nueva-contrasena-error').textContent = error.message;
+            }
+        }
+    </script>
+</body>
+</html>

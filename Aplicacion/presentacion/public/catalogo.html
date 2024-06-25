@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Catálogo de Productos</title>
+    <style>
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px;
+        }
+        .form-group {
+            margin-bottom: 10px;
+        }
+        .product-card {
+            border: 1px solid #ccc;
+            padding: 20px;
+            margin: 20px;
+            width: 300px;
+        }
+        .product-card img {
+            max-width: 100%;
+        }
+        .error {
+            color: red;
+        }
+        #carrito-container {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            border: 1px solid #ccc;
+            padding: 20px;
+            background: #fff;
+            width: 300px;
+        }
+        .carrito-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Catálogo de Productos</h1>
+        <div class="form-group">
+            <label for="categoria">Categoría:</label>
+            <select id="categoria" onchange="filtrarProductos()">
+                <option value="">Todas</option>
+                <!-- Las categorías se llenarán dinámicamente -->
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="precioMin">Precio mínimo:</label>
+            <input type="number" id="precioMin" onchange="filtrarProductos()">
+        </div>
+        <div class="form-group">
+            <label for="precioMax">Precio máximo:</label>
+            <input type="number" id="precioMax" onchange="filtrarProductos()">
+        </div>
+        <div id="productos-container"></div>
+        <div id="error-container" class="error"></div>
+    </div>
+
+    <div id="carrito-container">
+        <h2>Carrito de Compras</h2>
+        <div id="carrito-items"></div>
+        <p id="total-carrito"></p>
+        <button onclick="completarCompra()">Completar Compra</button>
+    </div>
+
+    <script>
+        let carrito = [];
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            await cargarCategorias();
+            await cargarProductos();
+        });
+
+        async function cargarCategorias() {
+            const categoriaSelect = document.getElementById('categoria');
+            try {
+                const response = await fetch('/catalogo/categorias');
+                const categorias = await response.json();
+                categorias.forEach(categoria => {
+                    const option = document.createElement('option');
+                    option.value = categoria.categoriaid;
+                    option.textContent = categoria.nombre;
+                    categoriaSelect.appendChild(option);
+                });
+            } catch (error) {
+                document.getElementById('error-container').textContent = error.message;
+            }
+        }
+
+        async function cargarProductos() {
+            try {
+                const response = await fetch('/catalogo/productos');
+                const productos = await response.json();
+                mostrarProductos(productos);
+            } catch (error) {
+                document.getElementById('error-container').textContent = error.message;
+            }
+        }
+
+        function mostrarProductos(productos) {
+            const productosContainer = document.getElementById('productos-container');
+            productosContainer.innerHTML = '';
+            productos.forEach(producto => {
+                const productCard = document.createElement('div');
+                productCard.className = 'product-card';
+                productCard.innerHTML = `
+                    <img src="data:image/png;base64,${producto.imagen}">
+                    <h2>${producto.nombre}</h2>
+                    <p>${producto.descripcion}</p>
+                    <p>Precio: $${producto.precio}</p>
+                    <p>Disponibilidad: ${producto.cantidadstock}</p>
+                    <button onclick="agregarAlCarrito(${producto.productoid}, '${producto.nombre}', ${producto.precio})">Agregar al Carrito</button>
+                `;
+                productosContainer.appendChild(productCard);
+            });
+        }
+
+        async function filtrarProductos() {
+            const categoria = document.getElementById('categoria').value;
+            const precioMin = document.getElementById('precioMin').value;
+            const precioMax = document.getElementById('precioMax').value;
+            try {
+                const response = await fetch(`/catalogo/productos?categoria=${categoria}&precioMin=${precioMin}&precioMax=${precioMax}`);
+                const productos = await response.json();
+                mostrarProductos(productos);
+            } catch (error) {
+                document.getElementById('error-container').textContent = error.message;
+            }
+        }
+
+        function agregarAlCarrito(productoid, nombre, precio) {
+            const productoExistente = carrito.find(item => item.productoid === productoid);
+            if (productoExistente) {
+                productoExistente.cantidad += 1;
+            } else {
+                carrito.push({ productoid, nombre, precio, cantidad: 1 });
+            }
+            mostrarCarrito();
+        }
+
+        function mostrarCarrito() {
+            const carritoItems = document.getElementById('carrito-items');
+            carritoItems.innerHTML = '';
+            let total = 0;
+            carrito.forEach(item => {
+                total += item.precio * item.cantidad;
+                carritoItems.innerHTML += `
+                    <div class="carrito-item">
+                        <span>${item.nombre}</span>
+                        <span>${item.cantidad}</span>
+                        <span>$${(item.precio * item.cantidad).toFixed(2)}</span>
+                        <button onclick="modificarCantidad(${item.productoid}, -1)">-</button>
+                        <button onclick="modificarCantidad(${item.productoid}, 1)">+</button>
+                        <button onclick="eliminarDelCarrito(${item.productoid})">Eliminar</button>
+                    </div>
+                `;
+            });
+            document.getElementById('total-carrito').textContent = `Total: $${total.toFixed(2)}`;
+        }
+
+        function modificarCantidad(productoid, cambio) {
+            const producto = carrito.find(item => item.productoid === productoid);
+            if (producto) {
+                producto.cantidad += cambio;
+                if (producto.cantidad <= 0) {
+                    eliminarDelCarrito(productoid);
+                } else {
+                    mostrarCarrito();
+                }
+            }
+        }
+
+        function eliminarDelCarrito(productoid) {
+            carrito = carrito.filter(item => item.productoid !== productoid);
+            mostrarCarrito();
+        }
+
+        async function completarCompra() {
+            // Obtener el token del almacenamiento local o donde lo estés guardando
+            const token = localStorage.getItem('token');
+            
+            try {
+                const response = await fetch('/ventas/crear-pedido', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ carrito })
+                });
+                if (!response.ok) throw new Error('Error en la solicitud');
+                const data = await response.json();
+                if (data.url) {
+                    window.location.href = data.url; // Redirigir a PayPal
+                } else {
+                    alert('Error creando el pedido.');
+                }
+            } catch (error) {
+                alert('Error completando la compra: ' + error.message);
+            }
+        }
+    </script>
+</body>
+</html>

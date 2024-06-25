@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Reportes</title>
+    <style>
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px;
+        }
+        .form-group {
+            margin-bottom: 10px;
+        }
+        table {
+            margin-top: 20px;
+            border-collapse: collapse;
+            width: 80%;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Reportes</h1>
+        <div class="form-group">
+            <label for="tabla-select">Selecciona una tabla:</label>
+            <select id="tabla-select" onchange="cargarTabla()">
+                <option value="">Seleccione una tabla</option>
+                <option value="usuario">Usuarios</option>
+                <option value="categoria">Categorías</option>
+                <option value="producto">Productos</option>
+                <option value="pedido">Pedidos</option>
+                <option value="pedidoproducto">Pedidos Productos</option>
+                <option value="carrito">Carritos</option>
+                <option value="proveedor">Proveedores</option>
+                <option value="inventarioproveedor">Inventarios Proveedores</option>
+                <option value="feedback">Feedback</option>
+                <option value="pago">Pagos</option>
+            </select>
+        </div>
+        <div id="table-container"></div>
+        <div id="error-container" class="error"></div>
+    </div>
+
+    <script>
+        async function cargarTabla() {
+            const tabla = document.getElementById('tabla-select').value;
+            const errorContainer = document.getElementById('error-container');
+            errorContainer.textContent = '';
+            const tableContainer = document.getElementById('table-container');
+            tableContainer.innerHTML = '';
+
+            if (!tabla) return;
+
+            try {
+                const response = await fetch(`/reportes/obtener/${tabla}`);
+                if (!response.ok) throw new Error(await response.text());
+                const data = await response.json();
+                if (data.length === 0) {
+                    tableContainer.innerHTML = '<p>No hay datos disponibles.</p>';
+                    return;
+                }
+
+                const table = document.createElement('table');
+                const thead = document.createElement('thead');
+                const tbody = document.createElement('tbody');
+                const headerRow = document.createElement('tr');
+
+                // Crear encabezados de tabla
+                Object.keys(data[0]).forEach(key => {
+                    const th = document.createElement('th');
+                    th.textContent = key;
+                    headerRow.appendChild(th);
+                });
+                thead.appendChild(headerRow);
+                table.appendChild(thead);
+
+                // Crear filas de datos
+                data.forEach(row => {
+                    const tr = document.createElement('tr');
+                    Object.values(row).forEach(value => {
+                        const td = document.createElement('td');
+                        td.textContent = value;
+                        tr.appendChild(td);
+                    });
+                    tbody.appendChild(tr);
+                });
+                table.appendChild(tbody);
+                tableContainer.appendChild(table);
+            } catch (error) {
+                errorContainer.textContent = error.message;
+            }
+        }
+    </script>
+</body>
+</html>

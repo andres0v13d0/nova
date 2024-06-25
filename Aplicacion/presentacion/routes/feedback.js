@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const feedbackService = require('../../logica/services/feedbackService');
 
-router.post('/feedback', async (req, res) => {
+router.post('/registrar', async (req, res) => {
     try {
         const feedback = await feedbackService.registrarFeedback(req.body);
         res.json(feedback);

@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Administrador</title>
+    <style>
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px;
+        }
+        table {
+            margin-top: 20px;
+            border-collapse: collapse;
+            width: 80%;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Bienvenido, <span id="usuario-nombre"></span></h1>
+        <p>Funcionalidades para realizar compras</p>
+        <button onclick="cerrarSesion()">Cerrar Sesión</button>
+        <button onclick="location.href='actualizar.html'">Actualizar Información</button>
+        <button onclick="location.href='inventario.html'">Gestión de Inventario</button>
+        <button onclick="location.href='reportes.html'">Ver Reportes</button>
+        <button onclick="window.location.href='proveedores.html'">Gestión de Proveedores</button>
+        <hr>
+        <h2>Lista de Usuarios</h2>
+        <table id="usuarios-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Nombre</th>
+                    <th>Apellido</th>
+                    <th>Correo</th>
+                    <th>Rol</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Usuarios se cargarán aquí -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const nombre = localStorage.getItem('usuarioNombre');
+            document.getElementById('usuario-nombre').textContent = nombre;
+
+            const token = localStorage.getItem('token');
+            const response = await fetch('/usuario/usuarios', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            const usuarios = await response.json();
+            const usuariosTable = document.getElementById('usuarios-table').getElementsByTagName('tbody')[0];
+
+            usuarios.forEach(usuario => {
+                const row = usuariosTable.insertRow();
+                row.insertCell(0).textContent = usuario.usuarioid;
+                row.insertCell(1).textContent = usuario.nombre;
+                row.insertCell(2).textContent = usuario.apellido;
+                row.insertCell(3).textContent = usuario.correoelectronico;
+                row.insertCell(4).textContent = usuario.rol;
+                const accionesCell = row.insertCell(5);
+                const cambiarRolButton = document.createElement('button');
+                cambiarRolButton.textContent = 'Cambiar a Administrador';
+                cambiarRolButton.onclick = () => cambiarRol(usuario.usuarioid);
+                accionesCell.appendChild(cambiarRolButton);
+            });
+        });
+
+        async function cambiarRol(usuarioid) {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch('/usuario/cambiar-rol', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ usuarioid, rol: 'administrador' })
+                });
+
+                if (!response.ok) throw new Error(await response.text());
+
+                alert('Rol cambiado a administrador');
+                window.location.reload();
+            } catch (error) {
+                alert('Error cambiando el rol: ' + error.message);
+            }
+        }
+
+        function cerrarSesion() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('usuarioId');
+            localStorage.removeItem('usuarioNombre');
+            window.location.href = '/registro.html';
+        }
+    </script>
+</body>
+</html>

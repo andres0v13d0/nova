@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Actualizar Información</title>
+    <style>
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px;
+        }
+        .form-group {
+            margin-bottom: 10px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .form-group input {
+            padding: 5px;
+            width: 100%;
+        }
+        .form-group button {
+            padding: 10px;
+        }
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Actualizar Información</h1>
+        <div class="form-group">
+            <label for="update-nombre">Nombre:</label>
+            <input type="text" id="update-nombre" name="update-nombre">
+        </div>
+        <div class="form-group">
+            <label for="update-apellido">Apellido:</label>
+            <input type="text" id="update-apellido" name="update-apellido">
+        </div>
+        <div class="form-group">
+            <label for="update-correo">Correo Electrónico:</label>
+            <input type="email" id="update-correo" name="update-correo" disabled>
+        </div>
+        <div class="form-group">
+            <label for="update-contrasena">Contraseña:</label>
+            <input type="password" id="update-contrasena" name="update-contrasena">
+        </div>
+        <div class="form-group">
+            <label for="update-direccion">Dirección:</label>
+            <input type="text" id="update-direccion" name="update-direccion">
+        </div>
+        <div class="form-group">
+            <label for="update-telefono">Teléfono:</label>
+            <input type="text" id="update-telefono" name="update-telefono">
+        </div>
+        <div class="form-group">
+            <button onclick="actualizarInformacion()">Actualizar Información</button>
+        </div>
+        <div id="update-error" class="error"></div>
+    </div>
+
+    <script>
+        let usuarioId = null;  // Variable global para almacenar el ID del usuario
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const token = localStorage.getItem('token');
+            const response = await fetch('/usuario/info', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            const usuario = await response.json();
+            usuarioId = usuario.usuarioid;
+
+            document.getElementById('update-nombre').value = usuario.nombre;
+            document.getElementById('update-apellido').value = usuario.apellido;
+            document.getElementById('update-correo').value = usuario.correoelectronico;
+            document.getElementById('update-direccion').value = usuario.direccion;
+            document.getElementById('update-telefono').value = usuario.telefono;
+        });
+
+        async function actualizarInformacion() {
+            const nombre = document.getElementById('update-nombre').value;
+            const apellido = document.getElementById('update-apellido').value;
+            const contrasena = document.getElementById('update-contrasena').value;
+            const direccion = document.getElementById('update-direccion').value;
+            const telefono = document.getElementById('update-telefono').value;
+
+            try {
+                const token = localStorage.getItem('token');
+                const response = await fetch('/usuario/actualizar', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ usuarioid: usuarioId, nombre, apellido, contrasena, direccion, telefono })
+                });
+
+                if (!response.ok) throw new Error(await response.text());
+
+                alert('Información actualizada exitosamente');
+            } catch (error) {
+                document.getElementById('update-error').textContent = error.message;
+            }
+        }
+    </script>
+</body>
+</html>
