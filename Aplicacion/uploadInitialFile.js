@@ -1,80 +1,65 @@
-const fs = require('fs');
+const { authenticate, uploadFile, listFiles, oAuth2Client } = require('./logica/services/googleDriveService');
 const path = require('path');
-const { google } = require('googleapis');
-const readline = require('readline');
-const { OAuth2 } = google.auth;
-const TOKEN_PATH = path.join(__dirname, 'token.json');
+const express = require('express');
+const fs = require('fs');
 
-const CLIENT_ID = '1043649098181-33fn1vi14vi7qhu8di1pjhknmenc7grq.apps.googleusercontent.com';
-const CLIENT_SECRET = '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';
-const REDIRECT_URI = 'http://localhost:3000/oauth2callback';
-const REFRESH_TOKEN = '1//05qWOG1pygu_WCgYIARAAGAUSNwF-L9Ir20jyFb4GgyfNyhj9vW0L0q3AqB4yhMSspkTko8lsa0bJlReq1DM2FCl_fc-CJIB7Pn8';
+const TOKEN_PATH = path.join(__dirname, 'token.json'); // Asegúrate de definir TOKEN_PATH
 
-const oAuth2Client = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
+const app = express();
+const PORT = 3000;
 
-const SCOPES = ['https://www.googleapis.com/auth/drive.file'];
-
-const authenticate = () => {
-  fs.readFile(TOKEN_PATH, (err, token) => {
-    if (err) return getAccessToken(oAuth2Client);
-    oAuth2Client.setCredentials(JSON.parse(token));
-  });
-};
-
-const getAccessToken = (oAuth2Client) => {
-  const authUrl = oAuth2Client.generateAuthUrl({
-    access_type: 'offline',
-    scope: SCOPES,
-  });
-  console.log('Authorize this app by visiting this url:', authUrl);
-  const rl = readline.createInterface({
-    input: process.stdin,
-    output: process.stdout,
-  });
-  rl.question('Enter the code from that page here: ', (code) => {
-    rl.close();
-    oAuth2Client.getToken(code, (err, token) => {
-      if (err) return console.error('Error retrieving access token', err);
-      oAuth2Client.setCredentials(token);
-      fs.writeFile(TOKEN_PATH, JSON.stringify(token), (err) => {
-        if (err) return console.error(err);
-        console.log('Token stored to', TOKEN_PATH);
-      });
-    });
-  });
-};
-
-const drive = google.drive({ version: 'v3', auth: oAuth2Client });
-
-const uploadFile = async (fileName, filePath, mimeType) => {
-  const fileMetadata = {
-    name: fileName,
-  };
-  const media = {
-    mimeType,
-    body: fs.createReadStream(filePath),
-  };
+app.get('/oauth2callback', async (req, res) => {
+  const code = req.query.code;
+  if (!code) {
+    res.send('Error: Missing authorization code');
+    return;
+  }
 
   try {
-    const file = await drive.files.create({
-      resource: fileMetadata,
-      media: media,
-      fields: 'id',
-    });
-    console.log('File Id:', file.data.id);
-    return file.data.id;
+    const { tokens } = await oAuth2Client.getToken(code);
+    oAuth2Client.setCredentials(tokens);
+    fs.writeFileSync(TOKEN_PATH, JSON.stringify(tokens));
+    console.log('Access Token:', tokens.access_token);
+    console.log('Refresh Token:', tokens.refresh_token);
+    res.send('Authorization successful! You can close this tab.');
+    // Subir el archivo después de la autenticación exitosa
+    await uploadFileAfterAuth();
   } catch (error) {
-    console.error('Error uploading file:', error);
+    console.error('Error retrieving access token', error);
+    res.send('Error retrieving access token');
+  }
+});
+
+const authUrl = oAuth2Client.generateAuthUrl({
+  access_type: 'offline',
+  scope: ['https://www.googleapis.com/auth/drive.file'],
+});
+
+app.listen(PORT, () => {
+  console.log(`Server is running on http://localhost:${PORT}`);
+  console.log(`Authorize this app by visiting this url: ${authUrl}`);
+});
+
+const uploadFileAfterAuth = async () => {
+  try {
+    const fileName = 'productos.csv';
+    const filePath = path.join(__dirname, fileName);
+    const mimeType = 'text/csv';
+    const fileId = await uploadFile(fileName, filePath, mimeType);
+    console.log('Uploaded file ID:', fileId);
+    await listFiles(oAuth2Client);  // Listar archivos para verificar la subida
+  } catch (error) {
+    console.error('Error during the process:', error);
   }
 };
 
 const main = async () => {
-  authenticate();
-  const fileName = 'productos.csv';
-  const filePath = path.join(__dirname, fileName);
-  const mimeType = 'text/csv';
-  const fileId = await uploadFile(fileName, filePath, mimeType);
-  console.log('Uploaded file ID:', fileId);
+  try {
+    const authClient = await authenticate();
+    await uploadFileAfterAuth();
+  } catch (error) {
+    console.error('Error during the process:', error);
+  }
 };
 
 main();

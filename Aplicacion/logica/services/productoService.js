@@ -4,27 +4,24 @@ const { parse } = require('json2csv');
 const fs = require('fs');
 const path = require('path');
 
-const authenticate = () => {
-    fs.readFile(TOKEN_PATH, (err, token) => {
-      if (err) return getAccessToken(oAuth2Client);
-      oAuth2Client.setCredentials(JSON.parse(token));
-    });
-  };
-
 const FILE_NAME = 'productos.csv';
 const FILE_PATH = path.join(__dirname, FILE_NAME);
-
-authenticate();
+const FILE_ID = '1De9nlotwwAnIrdi62ToJq2AkTpDggXoE';
 
 const actualizarArchivoCSV = async () => {
-  const productos = await db.producto.findAll({ raw: true });
-  const csv = parse(productos);
+  try {
+    const productos = await db.producto.findAll({ raw: true });
+    const csv = parse(productos);
 
-  fs.writeFileSync(FILE_PATH, csv);
+    fs.writeFileSync(FILE_PATH, csv);
+    console.log(`Archivo ${FILE_NAME} actualizado localmente`);
 
-  
-  const fileId = 'YOUR_FILE_ID'; 
-  await uploadFile(FILE_NAME, FILE_PATH, 'text/csv', fileId);
+    await authenticate();
+    await uploadFile(FILE_NAME, FILE_PATH, 'text/csv', FILE_ID);
+    console.log('Archivo actualizado en Google Drive');
+  } catch (error) {
+    console.error('Error al actualizar el archivo CSV:', error);
+  }
 };
 
 const crearProducto = async (productoData) => {
