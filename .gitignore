@@ -6,4 +6,4 @@ exportToCSV.js
 productos.csv
 Aplicacion/fetchRucInfo.js
 Aplicacion/logica/services/tokenRuc.js
-Aplicacion/logica/services/tokenGemini.js
+Aplicacion/logica/services/tokenGPT.js
