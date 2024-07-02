@@ -40,9 +40,27 @@ const eliminarProducto = async (productoid) => {
   }
 };
 
+const obtenerCategorias = async () => {
+  try {
+    return await db.categoria.findAll();
+  } catch (error) {
+    throw new Error(`Error obteniendo categorías: ${error.message}`);
+  }
+};
+
+const agregarCategoria = async (data) => {
+  try {
+    return await db.categoria.create(data);
+  } catch (error) {
+    throw new Error(`Error agregando categoría: ${error.message}`);
+  }
+};
+
 module.exports = {
   obtenerProductos,
   agregarProducto,
   modificarProducto,
   eliminarProducto,
+  obtenerCategorias,
+  agregarCategoria,
 };

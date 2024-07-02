@@ -6,7 +6,7 @@ module.exports = (sequelize, DataTypes) => {
             autoIncrement: true
         },
         nombre: {
-            type: DataTypes.STRING(100),
+            type: DataTypes.STRING(50),
             allowNull: false
         },
         descripcion: {
@@ -15,16 +15,12 @@ module.exports = (sequelize, DataTypes) => {
         }
     }, {
         tableName: 'categoria',
-        timestamps: false,
-        hooks: {
-            beforeCreate: (categoria, options) => {
-                console.log(`Creando categoria: ${categoria.nombre}`);
-            },
-            beforeUpdate: (categoria, options) => {
-                console.log(`Actualizando categoria: ${categoria.nombre}`);
-            }
-        }
+        timestamps: false
     });
+
+    Categoria.associate = (models) => {
+        Categoria.hasMany(models.productoproveedor, { foreignKey: 'categoriaid', as: 'productos' });
+    };
 
     return Categoria;
 };

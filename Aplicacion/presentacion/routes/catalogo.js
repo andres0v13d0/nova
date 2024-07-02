@@ -12,9 +12,9 @@ router.get('/categorias', async (req, res) => {
 });
 
 router.get('/productos', async (req, res) => {
-  const { categoria, precioMin, precioMax } = req.query;
+  const { nombre, categoria, precioMin, precioMax } = req.query;
   try {
-    const productos = await catalogoService.filtrarProductos(categoria, precioMin, precioMax);
+    const productos = await catalogoService.filtrarProductos(nombre, categoria, precioMin, precioMax);
     res.json(productos);
   } catch (error) {
     res.status(500).json({ error: error.message });

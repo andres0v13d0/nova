@@ -45,6 +45,10 @@
     <div class="container">
         <h1>Catálogo de Productos</h1>
         <div class="form-group">
+            <label for="buscarNombre">Buscar por nombre:</label>
+            <input type="text" id="buscarNombre" oninput="filtrarProductos()">
+        </div>
+        <div class="form-group">
             <label for="categoria">Categoría:</label>
             <select id="categoria" onchange="filtrarProductos()">
                 <option value="">Todas</option>
@@ -71,6 +75,7 @@
     </div>
 
     <script>
+        let productos = [];
         let carrito = [];
 
         document.addEventListener('DOMContentLoaded', async () => {
@@ -123,11 +128,13 @@
         }
 
         async function filtrarProductos() {
+            const nombre = document.getElementById('buscarNombre').value.toLowerCase();
             const categoria = document.getElementById('categoria').value;
             const precioMin = document.getElementById('precioMin').value;
             const precioMax = document.getElementById('precioMax').value;
+
             try {
-                const response = await fetch(`/catalogo/productos?categoria=${categoria}&precioMin=${precioMin}&precioMax=${precioMax}`);
+                const response = await fetch(`/catalogo/productos?nombre=${nombre}&categoria=${categoria}&precioMin=${precioMin}&precioMax=${precioMax}`);
                 const productos = await response.json();
                 mostrarProductos(productos);
             } catch (error) {
@@ -183,7 +190,6 @@
         }
 
         async function completarCompra() {
-            // Obtener el token del almacenamiento local o donde lo estés guardando
             const token = localStorage.getItem('token');
             
             try {

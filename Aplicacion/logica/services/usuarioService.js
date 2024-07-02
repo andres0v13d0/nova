@@ -16,15 +16,34 @@ const registrarUsuario = async (usuarioData) => {
         usuarioData.contrasena = hashedPassword;
 
         const codigoConfirmacion = generarCodigo();
-        usuarioData.codigoConfirmacion = codigoConfirmacion;
+        usuarioData.codigoconfirmacion = codigoConfirmacion;
 
-        const usuario = await db.usuario.create(usuarioData);
+        await db.tbltuser.create(usuarioData);
 
         await enviarCorreo(usuarioData.correoelectronico, 'Confirmación de cuenta', `Tu código de confirmación es: ${codigoConfirmacion}`);
 
-        return usuario;
+        return { message: 'Registro exitoso. Revisa tu correo para el código de confirmación.' };
     } catch (error) {
         throw new Error(`Error registrando el usuario: ${error.message}`);
+    }
+};
+
+const confirmarRegistro = async (correo, codigo) => {
+    try {
+        const usuarioTemp = await db.tbltuser.findOne({ where: { correoelectronico: correo, codigoconfirmacion: codigo } });
+        if (!usuarioTemp) {
+            throw new Error('Código de confirmación incorrecto');
+        }
+
+        const usuarioData = usuarioTemp.get({ plain: true });
+        delete usuarioData.codigoconfirmacion;
+
+        const usuario = await db.usuario.create(usuarioData);
+        await usuarioTemp.destroy();
+
+        return usuario;
+    } catch (error) {
+        throw new Error(`Error confirmando el registro: ${error.message}`);
     }
 };
 
@@ -48,13 +67,12 @@ const recuperarContrasena = async (correo) => {
         const usuario = await db.usuario.findOne({ where: { correoelectronico: correo } });
         if (!usuario) throw new Error('Usuario no encontrado');
 
-        const codigoRecuperacion = generarCodigo();
-        usuario.codigoRecuperacion = codigoRecuperacion;
-        await usuario.save();
+        const codigorecuperacion = generarCodigo();
+        await db.recuperacion.upsert({ correoelectronico: correo, codigorecuperacion });
 
-        await enviarCorreo(correo, 'Recuperación de contraseña', `Tu código de recuperación es: ${codigoRecuperacion}`);
+        await enviarCorreo(correo, 'Recuperación de contraseña', `Tu código de recuperación es: ${codigorecuperacion}`);
 
-        return usuario;
+        return { message: 'Código de recuperación enviado' };
     } catch (error) {
         throw new Error(`Error recuperando la contraseña: ${error.message}`);
     }
@@ -62,14 +80,14 @@ const recuperarContrasena = async (correo) => {
 
 const verificarCodigo = async (correo, codigo) => {
     try {
-        const usuario = await db.usuario.findOne({ where: { correoelectronico: correo } });
-        if (!usuario) throw new Error('Usuario no encontrado');
+        const usuarioTemp = await db.tbltuser.findOne({ where: { correoelectronico: correo, codigoconfirmacion: codigo } });
+        const recuperacion = await db.recuperacion.findOne({ where: { correoelectronico: correo, codigorecuperacion: codigo } });
 
-        if (usuario.codigoConfirmacion === codigo || usuario.codigoRecuperacion === codigo) {
-            usuario.codigoConfirmacion = null;
-            usuario.codigoRecuperacion = null;
-            await usuario.save();
-            return true;
+        if (usuarioTemp) {
+            await confirmarRegistro(correo, codigo);
+            return { message: 'Registro confirmado. Ahora puedes iniciar sesión.' };
+        } else if (recuperacion) {
+            return { message: 'Código de recuperación verificado. Ahora puedes establecer una nueva contraseña.' };
         } else {
             throw new Error('Código inválido');
         }
@@ -137,6 +155,7 @@ const obtenerUsuarioPorId = async (usuarioid) => {
 
 module.exports = {
     registrarUsuario,
+    confirmarRegistro,
     autenticarUsuario,
     recuperarContrasena,
     verificarCodigo,

@@ -12,6 +12,16 @@ router.post('/registro', async (req, res) => {
     }
 });
 
+router.post('/confirmar-registro', async (req, res) => {
+    try {
+        const { correoelectronico, codigoConfirmacion } = req.body;
+        const usuario = await usuarioService.confirmarRegistro(correoelectronico, codigoConfirmacion);
+        res.json({ message: 'Confirmación de registro exitosa.', usuario });
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
 router.post('/login', async (req, res) => {
     try {
         const { correoelectronico, contrasena } = req.body;

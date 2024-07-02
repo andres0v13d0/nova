@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compras del Administrador</title>
+    <style>
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px;
+        }
+        .form-group {
+            margin-bottom: 10px;
+        }
+        table {
+            margin-top: 20px;
+            border-collapse: collapse;
+            width: 80%;
+        }
+        table, th, td {
+            border: 1px solid black;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .error {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Compras del Administrador</h1>
+        <div class="form-group">
+            <label for="buscarProducto">Buscar Producto:</label>
+            <input type="text" id="buscarProducto" oninput="buscarProductos()">
+        </div>
+        <div class="form-group">
+            <label for="filtrarCategoria">Filtrar por Categoría:</label>
+            <select id="filtrarCategoria" onchange="filtrarProductos()">
+                <option value="">Todas las Categorías</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="filtrarEmpresa">Filtrar por Empresa:</label>
+            <select id="filtrarEmpresa" onchange="filtrarProductos()">
+                <option value="">Todas las Empresas</option>
+            </select>
+        </div>
+        <div id="table-container"></div>
+        <div id="error-container" class="error"></div>
+        <h2>Carrito de Compras</h2>
+        <div id="carrito-container"></div>
+        <button onclick="finalizarCompra()">Finalizar Compra</button>
+        <button onclick="marcarPedidoRecibido()">Pedido Recibido</button>
+    </div>
+
+    <script>
+        let productos = [];
+        let carrito = [];
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            await cargarProductos();
+            await cargarCategorias();
+            await cargarEmpresas();
+        });
+
+        async function cargarProductos() {
+            try {
+                const response = await fetch('/compras/productos', {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+                const data = await response.json();
+                productos = Array.isArray(data) ? data : [];
+                mostrarProductos(productos);
+            } catch (error) {
+                document.getElementById('error-container').textContent = error.message;
+            }
+        }
+
+        async function cargarCategorias() {
+            try {
+                const response = await fetch('/compras/categorias', {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+                const categorias = await response.json();
+                const select = document.getElementById('filtrarCategoria');
+                categorias.forEach(categoria => {
+                    const option = document.createElement('option');
+                    option.value = categoria.categoriaid;
+                    option.textContent = categoria.nombre;
+                    select.appendChild(option);
+                });
+            } catch (error) {
+                document.getElementById('error-container').textContent = error.message;
+            }
+        }
+
+        async function cargarEmpresas() {
+            try {
+                const response = await fetch('/compras/empresas', {
+                    headers: {
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+                const empresas = await response.json();
+                const select = document.getElementById('filtrarEmpresa');
+                empresas.forEach(empresa => {
+                    const option = document.createElement('option');
+                    option.value = empresa.usuarioid;
+                    option.textContent = empresa.nombreempresa;
+                    select.appendChild(option);
+                });
+            } catch (error) {
+                document.getElementById('error-container').textContent = error.message;
+            }
+        }
+
+        function mostrarProductos(productos) {
+            const tableContainer = document.getElementById('table-container');
+            const table = document.createElement('table');
+            const thead = document.createElement('thead');
+            const tbody = document.createElement('tbody');
+            const headerRow = document.createElement('tr');
+
+            const columns = ['Nombre', 'Descripcion', 'Precio', 'Categoría', 'Empresa', 'Dueño', 'Acciones'];
+            columns.forEach(column => {
+                const th = document.createElement('th');
+                th.textContent = column;
+                headerRow.appendChild(th);
+            });
+
+            thead.appendChild(headerRow);
+            table.appendChild(thead);
+
+            productos.forEach(producto => {
+                const row = document.createElement('tr');
+                columns.forEach(column => {
+                    const td = document.createElement('td');
+                    switch(column) {
+                        case 'Categoría':
+                            td.textContent = producto.categoria.nombre;
+                            break;
+                        case 'Empresa':
+                            td.textContent = producto.proveedor.empresa.nombreempresa;
+                            break;
+                        case 'Dueño':
+                            td.textContent = producto.proveedor.nombre;
+                            break;
+                        case 'Acciones':
+                            td.innerHTML = `<button onclick='agregarAlCarrito(${JSON.stringify(producto)})'>Agregar al Carrito</button>`;
+                            break;
+                        default:
+                            td.textContent = producto[mapColumnName(column)];
+                    }
+                    row.appendChild(td);
+                });
+                tbody.appendChild(row);
+            });
+
+            table.appendChild(tbody);
+            tableContainer.innerHTML = '';
+            tableContainer.appendChild(table);
+        }
+
+        function mapColumnName(column) {
+            const columnMapping = {
+                'Nombre': 'nombreproducto',
+                'Descripcion': 'descripcionproducto',
+                'Precio': 'precioproducto'
+            };
+            return columnMapping[column] || column.toLowerCase();
+        }
+
+        function buscarProductos() {
+            const buscar = document.getElementById('buscarProducto').value.toLowerCase();
+            const productosFiltrados = productos.filter(producto => producto.nombreproducto.toLowerCase().includes(buscar));
+            mostrarProductos(productosFiltrados);
+        }
+
+        function filtrarProductos() {
+            const categoriaId = document.getElementById('filtrarCategoria').value;
+            const empresaId = document.getElementById('filtrarEmpresa').value;
+
+            const productosFiltrados = productos.filter(producto => {
+                const categoriaMatch = !categoriaId || producto.categoriaid == categoriaId;
+                const empresaMatch = !empresaId || producto.proveedor.empresa.usuarioid == empresaId;
+                return categoriaMatch && empresaMatch;
+            });
+
+            mostrarProductos(productosFiltrados);
+        }
+
+        function agregarAlCarrito(producto) {
+            const productoEnCarrito = carrito.find(p => p.productoproveedorid === producto.productoproveedorid);
+            if (productoEnCarrito) {
+                productoEnCarrito.cantidad++;
+            } else {
+                producto.cantidad = 1;
+                carrito.push(producto);
+            }
+            mostrarCarrito();
+        }
+
+        function mostrarCarrito() {
+            const carritoContainer = document.getElementById('carrito-container');
+            carritoContainer.innerHTML = '';
+
+            carrito.forEach(producto => {
+                const div = document.createElement('div');
+                div.textContent = `${producto.nombreproducto} - ${producto.cantidad} - ${producto.precioproducto}`;
+                const input = document.createElement('input');
+                input.type = 'number';
+                input.value = producto.cantidad;
+                input.min = 1;
+                input.onchange = () => {
+                    producto.cantidad = parseInt(input.value);
+                    mostrarCarrito();
+                };
+                div.appendChild(input);
+                carritoContainer.appendChild(div);
+            });
+        }
+
+        function limpiarPrecio(precio) {
+            let precioLimpio = precio.replace(/[^0-9.-]+/g, "");
+
+            let precioNumerico = parseFloat(precioLimpio);
+
+            return isNaN(precioNumerico) ? 0 : precioNumerico;
+        }
+
+        async function finalizarCompra() {
+            try {
+                if (carrito.length === 0) {
+                    alert('El carrito está vacío. Añade productos antes de finalizar la compra.');
+                    return;
+                }
+                
+                const carritoLimpio = carrito.map(producto => ({
+                    ...producto,
+                    precioproducto: limpiarPrecio(producto.precioproducto)
+                }));
+
+                console.log('Carrito al finalizar compra:', carritoLimpio); // Añadir un log para verificar el contenido del carrito
+                const response = await fetch('/compras/finalizar', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    },
+                    body: JSON.stringify({ carrito: carritoLimpio })
+                });
+
+                if (!response.ok) {
+                    throw new Error(await response.text());
+                }
+
+                alert('Compra finalizada exitosamente');
+                carrito = [];
+                mostrarCarrito();
+            } catch (error) {
+                document.getElementById('error-container').textContent = error.message;
+            }
+        }
+
+        async function marcarPedidoRecibido() {
+            try {
+                const response = await fetch('/compras/recibido', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    }
+                });
+
+                if (!response.ok) {
+                    throw new Error(await response.text());
+                }
+
+                alert('Pedido marcado como recibido exitosamente');
+                carrito = [];
+                mostrarCarrito();
+            } catch (error) {
+                document.getElementById('error-container').textContent = error.message;
+            }
+        }
+    </script>
+</body>
+</html>

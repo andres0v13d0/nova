@@ -8,9 +8,12 @@ const obtenerCategorias = async () => {
   }
 };
 
-const filtrarProductos = async (categoria, precioMin, precioMax) => {
+const filtrarProductos = async (nombre, categoria, precioMin, precioMax) => {
   try {
     const whereClause = {};
+    if (nombre) {
+      whereClause.nombre = { [db.Sequelize.Op.iLike]: `%${nombre}%` };
+    }
     if (categoria) {
       whereClause.categoriaid = categoria;
     }
@@ -18,7 +21,10 @@ const filtrarProductos = async (categoria, precioMin, precioMax) => {
       whereClause.precio = { [db.Sequelize.Op.gte]: precioMin };
     }
     if (precioMax) {
-      whereClause.precio = { [db.Sequelize.Op.lte]: precioMax };
+      whereClause.precio = { 
+        ...whereClause.precio,
+        [db.Sequelize.Op.lte]: precioMax 
+      };
     }
     return await db.producto.findAll({ where: whereClause });
   } catch (error) {

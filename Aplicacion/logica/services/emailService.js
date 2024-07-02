@@ -1,86 +1,28 @@
-const fs = require('fs');
-const path = require('path');
-const { google } = require('googleapis');
-const readline = require('readline');
 const nodemailer = require('nodemailer');
-const { OAuth2 } = google.auth;
+const { google } = require('googleapis');
 
-const TOKEN_PATH = path.join(__dirname, 'token.json');
-const CREDENTIALS_PATH = path.join(__dirname, 'credentials.json');
-const SCOPES = ['https://www.googleapis.com/auth/gmail.send'];
+const CLIENT_ID = '1043649098181-33fn1vi14vi7qhu8di1pjhknmenc7grq.apps.googleusercontent.com';
+const CLIENT_SECRET = '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';
+const REDIRECT_URI = 'http://localhost:3000/oauth2callback';
+const REFRESH_TOKEN = '1//05L0QiP8NZVyTCgYIARAAGAUSNwF-L9Irw8dmazuPo2LRYT9hj6yixyMyC477ue8NG4eZ0icUwhvv7XpsNLr6gENJA8CeeYSmGm4';
 
-const credentials = JSON.parse(fs.readFileSync(CREDENTIALS_PATH));
-const { client_secret, client_id, redirect_uris } = credentials.installed;
-const oAuth2Client = new OAuth2(client_id, client_secret, redirect_uris[0]);
+const oAuth2Client = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
+oAuth2Client.setCredentials({ refresh_token: REFRESH_TOKEN });
 
-const authenticate = () => {
-  return new Promise((resolve, reject) => {
-    fs.readFile(TOKEN_PATH, (err, token) => {
-      if (err) {
-        getAccessToken(oAuth2Client).then(resolve).catch(reject);
-      } else {
-        oAuth2Client.setCredentials(JSON.parse(token));
-        resolve(oAuth2Client);
-      }
-    });
-  });
-};
-
-const getAccessToken = (oAuth2Client) => {
-  return new Promise((resolve, reject) => {
-    const authUrl = oAuth2Client.generateAuthUrl({
-      access_type: 'offline',
-      scope: SCOPES,
-    });
-    console.log('Authorize this app by visiting this url:', authUrl);
-    const rl = readline.createInterface({
-      input: process.stdin,
-      output: process.stdout,
-    });
-    rl.question('Enter the code from that page here: ', (code) => {
-      rl.close();
-      oAuth2Client.getToken(code, (err, token) => {
-        if (err) {
-          console.error('Error retrieving access token', err);
-          reject(err);
-        } else {
-          oAuth2Client.setCredentials(token);
-          fs.writeFile(TOKEN_PATH, JSON.stringify(token), (err) => {
-            if (err) {
-              console.error(err);
-              reject(err);
-            } else {
-              console.log('Token stored to', TOKEN_PATH);
-              resolve(oAuth2Client);
-            }
-          });
-        }
-      });
-    });
-  });
-};
-
-const enviarCorreo = async (destinatario, asunto, texto) => {
+async function enviarCorreo(destinatario, asunto, texto) {
   try {
-    const auth = await authenticate();
-    const accessToken = await auth.getAccessToken();
+    const accessToken = await oAuth2Client.getAccessToken();
 
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
         type: 'OAuth2',
         user: 'novaapp12345@gmail.com',
-        clientId: client_id,
-        clientSecret: client_secret,
-        refreshToken: oAuth2Client.credentials.refresh_token,
+        clientId: CLIENT_ID,
+        clientSecret: CLIENT_SECRET,
+        refreshToken: REFRESH_TOKEN,
         accessToken: accessToken.token,
       },
-      tls: {
-        rejectUnauthorized: false,
-      },
-      connectionTimeout: 50000,  // 10 seconds
-      greetingTimeout: 50000,    // 10 seconds
-      socketTimeout: 50000       // 10 seconds
     });
 
     const mailOptions = {
@@ -96,6 +38,6 @@ const enviarCorreo = async (destinatario, asunto, texto) => {
     console.error('Error enviando el correo:', error);
     throw error;
   }
-};
+}
 
 module.exports = enviarCorreo;

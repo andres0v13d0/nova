@@ -6,28 +6,17 @@ module.exports = (sequelize, DataTypes) => {
             autoIncrement: true
         },
         nombre: {
-            type: DataTypes.STRING(50),
-            allowNull: false
-        },
-        apellido: {
-            type: DataTypes.STRING(50),
+            type: DataTypes.STRING(100),
             allowNull: false
         },
         correoelectronico: {
             type: DataTypes.STRING(100),
-            allowNull: false
+            allowNull: false,
+            unique: true
         },
         contrasena: {
-            type: DataTypes.STRING(255),
+            type: DataTypes.STRING(100),
             allowNull: false
-        },
-        direccion: {
-            type: DataTypes.STRING(255),
-            allowNull: true
-        },
-        telefono: {
-            type: DataTypes.STRING(15),
-            allowNull: true
         },
         rol: {
             type: DataTypes.STRING(20),
@@ -35,16 +24,13 @@ module.exports = (sequelize, DataTypes) => {
         }
     }, {
         tableName: 'usuario',
-        timestamps: false,
-        hooks: {
-            beforeCreate: (user, options) => {
-                console.log(`Creando usuario: ${user.nombre}`);
-            },
-            beforeUpdate: (user, options) => {
-                console.log(`Actualizando usuario: ${user.nombre}`);
-            }
-        }
+        timestamps: false
     });
+
+    Usuario.associate = (models) => {
+        Usuario.hasMany(models.productoproveedor, { foreignKey: 'usuarioid', as: 'productos' });
+        Usuario.hasOne(models.empresa, { foreignKey: 'usuarioid', as: 'empresa' });
+    };
 
     return Usuario;
 };

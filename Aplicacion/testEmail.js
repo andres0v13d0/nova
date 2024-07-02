@@ -1,4 +1,4 @@
-const enviarCorreo = require('./emailService');
+const enviarCorreo = require('./logica/services/emailService');
 
 async function main() {
   try {

@@ -22,7 +22,7 @@ CREATE TABLE Producto (
     Precio MONEY,
     CantidadStock INT,
     CategoriaID INT,
-    Imagen VARCHAR(255),
+    Imagen BYTEA,
     FOREIGN KEY (CategoriaID) REFERENCES Categoria(CategoriaID)
 );
 
@@ -164,7 +164,14 @@ ALTER TABLE Pago ADD CONSTRAINT Pago_pkey PRIMARY KEY (PagoID);
 CREATE OR REPLACE FUNCTION notify_producto_changes()
 RETURNS TRIGGER AS $$
 BEGIN
-  PERFORM pg_notify('producto_changes', row_to_json(NEW)::text);
+  PERFORM pg_notify('producto_changes', json_build_object(
+    'productoid', NEW.productoid,
+    'nombre', NEW.nombre,
+    'descripcion', NEW.descripcion,
+    'precio', NEW.precio,
+    'cantidadstock', NEW.cantidadstock,
+    'categoriaid', NEW.categoriaid
+  )::text);
   RETURN NEW;
 END;
 $$ LANGUAGE plpgsql;

@@ -14,11 +14,11 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: true
         },
         precio: {
-            type: DataTypes.DECIMAL,
+            type: DataTypes.DOUBLE,
             allowNull: false
         },
         cantidadstock: {
-            type: DataTypes.DECIMAL,
+            type: DataTypes.INTEGER,
             allowNull: false
         },
         categoriaid: {
@@ -26,20 +26,19 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false
         },
         imagen: {
-            type: DataTypes.BLOB,
-            allowNull: true
+            type: DataTypes.BLOB('long'),
+            allowNull: true,
+            get() {
+                const data = this.getDataValue('imagen');
+                return data ? data.toString('base64') : null;
+            },
+            set(value) {
+                this.setDataValue('imagen', Buffer.from(value, 'base64'));
+            }
         }
     }, {
         tableName: 'producto',
-        timestamps: false,
-        hooks: {
-            beforeCreate: (producto, options) => {
-                console.log(`Creando producto: ${producto.nombre}`);
-            },
-            beforeUpdate: (producto, options) => {
-                console.log(`Actualizando producto: ${producto.nombre}`);
-            }
-        }
+        timestamps: false
     });
 
     return Producto;

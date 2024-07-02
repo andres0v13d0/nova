@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Registro de Proveedor y Empresa</title>
+    <style>
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px;
+        }
+        input, button {
+            margin: 10px;
+        }
+        input[readonly] {
+            background-color: #f2f2f2;
+        }
+        .confirmation-section {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Registro de Proveedor y Empresa</h1>
+        <input type="text" id="ruc" placeholder="RUC">
+        <button onclick="buscarRuc()">Buscar RUC</button>
+        
+        <input type="text" id="nombre" placeholder="Nombre">
+        <input type="text" id="apellido" placeholder="Apellido" >
+        <input type="text" id="estadoRuc" placeholder="Estado del RUC" >
+        <input type="text" id="nombreEmpresa" placeholder="Nombre de la Empresa" >
+        <input type="text" id="direccionEmpresa" placeholder="Dirección de la Empresa" >
+        <input type="text" id="estadoEmpresa" placeholder="Estado de la Empresa" >
+        
+        <input type="email" id="correo" placeholder="Correo Electrónico">
+        <input type="password" id="contrasena" placeholder="Contraseña">
+        <input type="text" id="direccion" placeholder="Dirección">
+        <input type="text" id="telefono" placeholder="Teléfono">
+        
+        <button onclick="registrarProveedor()">Registrar Proveedor y Empresa</button>
+
+        <div class="confirmation-section">
+            <h2>Confirmar Registro</h2>
+            <input type="email" id="confirmarCorreo" placeholder="Correo Electrónico">
+            <input type="text" id="codigoConfirmacion" placeholder="Código de Confirmación">
+            <button onclick="confirmarRegistro()">Confirmar</button>
+        </div>
+    </div>
+    
+    <script>
+        async function buscarRuc() {
+            try {
+                const ruc = document.getElementById('ruc').value;
+                const response = await fetch(`/proveedor/buscarRuc/${ruc}`);
+                
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.message);
+                }
+
+                const data = await response.json();
+                document.getElementById('nombre').value = data.nombre;
+                document.getElementById('apellido').value = data.apellido;
+                document.getElementById('estadoRuc').value = data.estadoRuc;
+                document.getElementById('nombreEmpresa').value = data.nombreEmpresa;
+                document.getElementById('direccionEmpresa').value = data.direccionEmpresa;
+                document.getElementById('estadoEmpresa').value = data.estadoEmpresa;
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+
+        async function registrarProveedor() {
+            const usuarioData = {
+                nombre: document.getElementById('nombre').value,
+                apellido: document.getElementById('apellido').value,
+                correoelectronico: document.getElementById('correo').value,
+                contrasena: document.getElementById('contrasena').value,
+                direccion: document.getElementById('direccion').value,
+                telefono: document.getElementById('telefono').value,
+                rol: 'proveedor'
+            };
+
+            const empresaData = {
+                ruc: document.getElementById('ruc').value,
+                nombreempresa: document.getElementById('nombreEmpresa').value,
+                direccionempresa: document.getElementById('direccionEmpresa').value,
+                estadoruc: document.getElementById('estadoRuc').value,
+                estadoempresa: document.getElementById('estadoEmpresa').value
+            };
+
+            const response = await fetch('/proveedor/registrar', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ usuario: usuarioData, empresa: empresaData })
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                alert(data.message);
+            } else {
+                alert('Error: ' + error.message);
+            }
+        }
+
+        async function confirmarRegistro() {
+            const correo = document.getElementById('confirmarCorreo').value;
+            const codigo = document.getElementById('codigoConfirmacion').value;
+
+            const response = await fetch('/proveedor/confirmar', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ correo, codigo })
+            });
+
+            if (!response.ok) throw new Error(await response.text());
+
+            alert('Registro confirmado exitosamente.');
+        }
+    </script>
+</body>
+</html>

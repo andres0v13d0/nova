@@ -34,8 +34,8 @@
         <button onclick="cerrarSesion()">Cerrar Sesión</button>
         <button onclick="location.href='actualizar.html'">Actualizar Información</button>
         <button onclick="location.href='inventario.html'">Gestión de Inventario</button>
+        <button onclick="location.href='adminCompras.html'">Comprar</button>
         <button onclick="location.href='reportes.html'">Ver Reportes</button>
-        <button onclick="window.location.href='proveedores.html'">Gestión de Proveedores</button>
         <hr>
         <h2>Lista de Usuarios</h2>
         <table id="usuarios-table">
@@ -71,21 +71,23 @@
             const usuariosTable = document.getElementById('usuarios-table').getElementsByTagName('tbody')[0];
 
             usuarios.forEach(usuario => {
-                const row = usuariosTable.insertRow();
-                row.insertCell(0).textContent = usuario.usuarioid;
-                row.insertCell(1).textContent = usuario.nombre;
-                row.insertCell(2).textContent = usuario.apellido;
-                row.insertCell(3).textContent = usuario.correoelectronico;
-                row.insertCell(4).textContent = usuario.rol;
-                const accionesCell = row.insertCell(5);
-                const cambiarRolButton = document.createElement('button');
-                cambiarRolButton.textContent = 'Cambiar a Administrador';
-                cambiarRolButton.onclick = () => cambiarRol(usuario.usuarioid);
-                accionesCell.appendChild(cambiarRolButton);
+                if (usuario.rol !== 'proveedor') {
+                    const row = usuariosTable.insertRow();
+                    row.insertCell(0).textContent = usuario.usuarioid;
+                    row.insertCell(1).textContent = usuario.nombre;
+                    row.insertCell(2).textContent = usuario.apellido;
+                    row.insertCell(3).textContent = usuario.correoelectronico;
+                    row.insertCell(4).textContent = usuario.rol;
+                    const accionesCell = row.insertCell(5);
+                    const cambiarRolButton = document.createElement('button');
+                    cambiarRolButton.textContent = usuario.rol === 'cliente' ? 'Cambiar a Administrador' : 'Cambiar a Cliente';
+                    cambiarRolButton.onclick = () => cambiarRol(usuario.usuarioid, usuario.rol === 'cliente' ? 'administrador' : 'cliente');
+                    accionesCell.appendChild(cambiarRolButton);
+                }
             });
         });
 
-        async function cambiarRol(usuarioid) {
+        async function cambiarRol(usuarioid, nuevoRol) {
             try {
                 const token = localStorage.getItem('token');
                 const response = await fetch('/usuario/cambiar-rol', {
@@ -94,12 +96,12 @@
                         'Content-Type': 'application/json',
                         'Authorization': `Bearer ${token}`
                     },
-                    body: JSON.stringify({ usuarioid, rol: 'administrador' })
+                    body: JSON.stringify({ usuarioid, rol: nuevoRol })
                 });
 
                 if (!response.ok) throw new Error(await response.text());
 
-                alert('Rol cambiado a administrador');
+                alert(`Rol cambiado a ${nuevoRol}`);
                 window.location.reload();
             } catch (error) {
                 alert('Error cambiando el rol: ' + error.message);
