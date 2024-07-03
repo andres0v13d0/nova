@@ -107,11 +107,10 @@
           headers: {
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify({ userInput: userMessage }),
+          body: JSON.stringify({ message: userMessage }),
         });
 
-        const data = await response.json();
-        const botMessage = data.response;
+        const botMessage = await response.text(); 
 
         // Add chat message to the chat history
         chatHistory.innerHTML += `<div class="bot-message">${botMessage}</div>`;
