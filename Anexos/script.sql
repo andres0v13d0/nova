@@ -1,93 +1,136 @@
-CREATE TABLE Usuario (
-    UsuarioID INT PRIMARY KEY,
-    Nombre VARCHAR(50),
-    Apellido VARCHAR(50),
-    CorreoElectronico VARCHAR(100),
-    Contrasena VARCHAR(255),
-    Direccion VARCHAR(255),
-    Telefono VARCHAR(15),
-    Rol VARCHAR(20)
+CREATE TABLE usuario (
+    usuarioid SERIAL PRIMARY KEY,
+    nombre VARCHAR(50),
+    apellido VARCHAR(50),
+    correoelectronico VARCHAR(100),
+    contrasena VARCHAR(255),
+    direccion VARCHAR(255),
+    telefono VARCHAR(15),
+    rol VARCHAR(20)
 );
 
-CREATE TABLE Categoria (
-    CategoriaID INT PRIMARY KEY,
-    Nombre VARCHAR(50),
-    Descripcion VARCHAR(255)
+CREATE TABLE categoria (
+    categoriaid SERIAL PRIMARY KEY,
+    nombre VARCHAR(50),
+    descripcion VARCHAR(255)
 );
 
-CREATE TABLE Producto (
-    ProductoID INT PRIMARY KEY,
-    Nombre VARCHAR(100),
-    Descripcion VARCHAR(255),
-    Precio MONEY,
-    CantidadStock INT,
-    CategoriaID INT,
-    Imagen BYTEA,
-    FOREIGN KEY (CategoriaID) REFERENCES Categoria(CategoriaID)
+CREATE TABLE producto (
+    productoid SERIAL PRIMARY KEY,
+    nombre VARCHAR(100),
+    descripcion VARCHAR(255),
+    precio MONEY,
+    cantidadstock INT,
+    categoriaid INT,
+    imagen BYTEA,
+    FOREIGN KEY (categoriaid) REFERENCES categoria(categoriaid)
 );
 
-CREATE TABLE Pedido (
-    PedidoID INT PRIMARY KEY,
-    UsuarioID INT,
-    FechaPedido DATE,
-    Estado VARCHAR(50),
-    Total FLOAT,
-    FOREIGN KEY (UsuarioID) REFERENCES Usuario(UsuarioID)
+CREATE TABLE pedido (
+    pedidoid SERIAL PRIMARY KEY,
+    usuarioid INT,
+    fechapedido DATE,
+    estado VARCHAR(50),
+    total FLOAT,
+    FOREIGN KEY (usuarioid) REFERENCES usuario(usuarioid)
 );
 
-CREATE TABLE PedidoProducto (
-    PedidoProductoID INT PRIMARY KEY,
-    PedidoID INT,
-    ProductoID INT,
-    Cantidad INT,
-    Precio FLOAT,
-    FOREIGN KEY (PedidoID) REFERENCES Pedido(PedidoID),
-    FOREIGN KEY (ProductoID) REFERENCES Producto(ProductoID)
+CREATE TABLE pedidoproducto (
+    pedidoproductoid SERIAL PRIMARY KEY,
+    pedidoid INT,
+    productoid INT,
+    cantidad INT,
+    precio FLOAT,
+    FOREIGN KEY (pedidoid) REFERENCES pedido(pedidoid),
+    FOREIGN KEY (productoid) REFERENCES producto(productoid)
 );
 
-CREATE TABLE Carrito (
-    CarritoID INT PRIMARY KEY,
-    UsuarioID INT,
-    PedidoProductoID INT,
-    FechaCreacion DATE,
-    FOREIGN KEY (UsuarioID) REFERENCES Usuario(UsuarioID),
-    FOREIGN KEY (PedidoProductoID) REFERENCES PedidoProducto(PedidoProductoID)
+CREATE TABLE carrito (
+    carritoid SERIAL PRIMARY KEY,
+    usuarioid INT,
+    pedidoproductoid INT,
+    fechacreacion DATE,
+    FOREIGN KEY (usuarioid) REFERENCES usuario(usuarioid),
+    FOREIGN KEY (pedidoproductoid) REFERENCES pedidoproducto(pedidoproductoid)
 );
 
-
-CREATE TABLE Proveedor (
-    ProveedorID INT PRIMARY KEY,
-    Nombre VARCHAR(100),
-    Telefono VARCHAR(15),
-    CorreoElectronico VARCHAR(100)
+CREATE TABLE productoproveedor(
+    productoproveedorid SERIAL PRIMARY KEY,
+    usuarioid INT NOT NULL,
+    nombreproducto VARCHAR(50) NOT NULL,
+	descripcionproducto VARCHAR(50) NOT NULL,
+	precioproducto MONEY NOT NULL,
+	categoriaid INT NOT NULL,
+	imagenproducto BYTEA NOT NULL,
+    FOREIGN KEY (usuarioid) REFERENCES usuario(usuarioid)
+    FOREIGN KEY (categoriaid) REFERENCES categoria(categoriaid)
 );
 
-CREATE TABLE InventarioProveedor (
-    InventarioProveedorID INT PRIMARY KEY,
-    ProductoID INT,
-    ProveedorID INT,
-    CantidadSuministrada INT,
-    PrecioEntrega MONEY,
-    FechaSuministro DATE,
-    FOREIGN KEY (ProductoID) REFERENCES Producto(ProductoID),
-    FOREIGN KEY (ProveedorID) REFERENCES Proveedor(ProveedorID)
+CREATE TABLE feedback (
+    feedbackid SERIAL PRIMARY KEY,
+    pedidoid INT,
+    calificacion INT,
+    comentario VARCHAR(255),
+    fecha DATE,
+    FOREIGN KEY (pedidoid) REFERENCES pedido(pedidoid)
 );
 
-CREATE TABLE Feedback (
-    FeedbackID INT PRIMARY KEY,
-    PedidoID INT,
-    Calificacion INT,
-    Comentario VARCHAR(255),
-    Fecha DATE,
-    FOREIGN KEY (PedidoID) REFERENCES Pedido(PedidoID)
+CREATE TABLE pago (
+    pagoid SERIAL PRIMARY KEY,
+    pedidoid INT,
+    precio FLOAT,
+    fechapago DATE,
+    FOREIGN KEY (pedidoid) REFERENCES pedido(pedidoid)
 );
 
-CREATE TABLE Pago (
-    PagoID INT PRIMARY KEY,
-    PedidoID INT,
-    Precio FLOAT,
-    FechaPago DATE,
-    FOREIGN KEY (PedidoID) REFERENCES Pedido(PedidoID)
+CREATE TABLE empresa(
+	ruc VARCHAR(13) PRIMARY KEY,
+	nombreempresa VARCHAR(100) NOT NULL,
+	direccionempresa VARCHAR(255) NOT NULL,
+	estadoruc VARCHAR(255) NOT NULL,
+	estadoempresa VARCHAR(20) NOT NULL,
+	usuarioid INT NOT NULL,
+	FOREIGN KEY (usuarioid) REFERENCES usuario(usuarioid)
+);
+
+CREATE TABLE productos_temporales(
+    productotemporalid SERIAL PRIMARY KEY,
+    usuarioid INT NOT NULL,
+    nombreproducto VARCHAR(100) NOT NULL,
+	descripcionproducto VARCHAR(255) NOT NULL,
+	precioproducto MONEY NOT NULL,
+	categoriaid INT NOT NULL,
+	imagen BYTEA NOT NULL,
+	cantidad INT NOT NULL,
+    FOREIGN KEY (usuarioid) REFERENCES usuario(usuarioid)
+    FOREIGN KEY (categoriaid) REFERENCES categoria(categoriaid)
+);
+
+CREATE TABLE recuperacion(
+    id SERIAL PRIMARY KEY,
+	correoelectronico VARCHAR(100) NOT NULL,
+	codigorecuperacion VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE tablatememp(
+	ruc VARCHAR(13) PRIMARY KEY,
+	nombreempresa VARCHAR(100) NOT NULL,
+	direccionempresa VARCHAR(255) NOT NULL,
+	estadoruc VARCHAR(255) NOT NULL,
+	estadoempresa VARCHAR(20) NOT NULL,
+	correoelectronico VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE tbltuser (
+    id SERIAL PRIMARY KEY,
+    nombre VARCHAR(50),
+    apellido VARCHAR(50),
+    correoelectronico VARCHAR(100),
+    contrasena VARCHAR(255),
+    direccion VARCHAR(255),
+    telefono VARCHAR(15),
+    rol VARCHAR(20),
+	codigoconfirmacion VARCHAR(6)
 );
 
 -- Usuario

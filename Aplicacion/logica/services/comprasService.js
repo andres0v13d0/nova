@@ -63,7 +63,6 @@ const finalizarCompra = async (carrito, adminId) => {
             correoProveedor: item.proveedor.correoelectronico
         }));
 
-        // Enviar correos a los proveedores
         for (const pedido of pedidos) {
             await enviarCorreo(pedido.correoProveedor, 'Nuevo Pedido', `El administrador ha realizado un pedido de ${pedido.cantidad} unidades del producto ${pedido.producto}.`);
         }
@@ -85,14 +84,13 @@ const marcarPedidoRecibido = async (adminId) => {
         const productosTemporales = await db.productos_temporales.findAll({ where: { usuarioid: adminId } });
 
         for (const item of productosTemporales) {
-            // Limpiar el precio del producto temporal
             const precioLimpio = limpiarPrecio(item.precioproducto);
 
             const productoExistente = await db.producto.findOne({
                 where: {
                     nombre: item.nombreproducto,
                     descripcion: item.descripcionproducto,
-                    precio: precioLimpio, // Usar el precio limpio aquí
+                    precio: precioLimpio,
                     categoriaid: item.categoriaid
                 }
             });
@@ -104,7 +102,7 @@ const marcarPedidoRecibido = async (adminId) => {
                 await db.producto.create({
                     nombre: item.nombreproducto,
                     descripcion: item.descripcionproducto,
-                    precio: precioLimpio, // Usar el precio limpio aquí
+                    precio: precioLimpio,
                     cantidadstock: item.cantidad,
                     categoriaid: item.categoriaid,
                     imagen: item.imagen
