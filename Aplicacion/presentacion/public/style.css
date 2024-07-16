@@ -1,0 +1,504 @@
+.sign-up {
+  background-color: #ffffff;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  width: 100%;
+}
+
+.sign-up .div {
+  background-color: var(--bg);
+  overflow: hidden;
+  width: 1419px;
+  height: 1061px;
+  position: relative;
+}
+
+.sign-up .top-header {
+  position: absolute;
+  width: 1440px;
+  height: 48px;
+  top: 0;
+  left: 0;
+  background-color: var(--button);
+}
+
+.sign-up .frame {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: 231px;
+  position: relative;
+  top: 12px;
+  left: 1220px;
+}
+
+.sign-up .frame-2 {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.sign-up .english {
+  position: relative;
+  width: fit-content;
+  font-family: var(--title-14px-regular-font-family);
+  font-weight: var(--title-14px-regular-font-weight);
+  color: var(--text);
+  font-size: var(--title-14px-regular-font-size);
+  letter-spacing: var(--title-14px-regular-letter-spacing);
+  line-height: var(--title-14px-regular-line-height);
+  white-space: nowrap;
+  font-style: var(--title-14px-regular-font-style);
+}
+
+.sign-up .img {
+  position: relative;
+  width: 24px;
+  height: 24px;
+}
+
+.sign-up .line {
+  position: absolute;
+  width: 1440px;
+  height: 1px;
+  top: 140px;
+  left: 0;
+}
+
+.sign-up .line-2 {
+  position: absolute;
+  width: 1419px;
+  height: 1px;
+  top: 0;
+  left: 0;
+}
+
+.sign-up .frame-3 {
+  display: inline-flex;
+  align-items: center;
+  gap: 129px;
+  position: absolute;
+  top: 200px;
+  left: 0;
+}
+
+.sign-up .side-image {
+  position: relative;
+  width: 805px;
+  height: 781px;
+  background-color: #cbe4e8;
+  border-radius: 0px 4px 4px 0px;
+  overflow: hidden;
+}
+
+.sign-up .dl-beatsnoop {
+  position: absolute;
+  width: 805px;
+  height: 706px;
+  top: 75px;
+  left: 0;
+}
+
+.sign-up .frame-4 {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 48px;
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.sign-up .frame-5 {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 24px;
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.sign-up .text-wrapper {
+  position: relative;
+  width: fit-content;
+  margin-top: -1px;
+  font-family: var(--heading-36px-medium-font-family);
+  font-weight: var(--heading-36px-medium-font-weight);
+  color: var(--text-2);
+  font-size: var(--heading-36px-medium-font-size);
+  letter-spacing: var(--heading-36px-medium-letter-spacing);
+  line-height: var(--heading-36px-medium-line-height);
+  white-space: nowrap;
+  font-style: var(--heading-36px-medium-font-style);
+}
+
+.sign-up .text-wrapper-2 {
+  position: relative;
+  width: fit-content;
+  font-family: var(--title-16px-regular-font-family);
+  font-weight: var(--title-16px-regular-font-weight);
+  color: var(--text-2);
+  font-size: var(--title-16px-regular-font-size);
+  letter-spacing: var(--title-16px-regular-letter-spacing);
+  line-height: var(--title-16px-regular-line-height);
+  white-space: nowrap;
+  font-style: var(--title-16px-regular-font-style);
+}
+
+.sign-up .frame-6 {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 40px;
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.sign-up .frame-7 {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 40px;
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.sign-up .frame-8 {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.sign-up .text-wrapper-3 {
+  position: relative;
+  width: fit-content;
+  margin-top: -1px;
+  opacity: 0.4;
+  font-family: var(--title-16px-regular-font-family);
+  font-weight: var(--title-16px-regular-font-weight);
+  color: var(--text-2);
+  font-size: var(--title-16px-regular-font-size);
+  letter-spacing: var(--title-16px-regular-letter-spacing);
+  line-height: var(--title-16px-regular-line-height);
+  white-space: nowrap;
+  font-style: var(--title-16px-regular-font-style);
+}
+
+.sign-up .under-line {
+  position: relative;
+  width: 370px;
+  height: 1px;
+  opacity: 0.5;
+  background-image: url(https://c.animaapp.com/wbyB8GGY/img/line-1-5.svg);
+  background-size: cover;
+  background-position: 50% 50%;
+}
+
+.sign-up .frame-9 {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.sign-up .button {
+  all: unset;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 16px 122px;
+  position: relative;
+  flex: 0 0 auto;
+  background-color: var(--button-2);
+  border-radius: 4px;
+}
+
+.sign-up .view-all-products {
+  position: relative;
+  width: fit-content;
+  margin-top: -1px;
+  font-family: var(--title-16px-medium-font-family);
+  font-weight: var(--title-16px-medium-font-weight);
+  color: var(--text);
+  font-size: var(--title-16px-medium-font-size);
+  letter-spacing: var(--title-16px-medium-letter-spacing);
+  line-height: var(--title-16px-medium-line-height);
+  white-space: nowrap;
+  font-style: var(--title-16px-medium-font-style);
+}
+
+.sign-up .frame-10 {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 32px;
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.sign-up .google-sign-up {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 16px 86px;
+  position: relative;
+  flex: 0 0 auto;
+  border-radius: 4px;
+  border: 1px solid;
+  border-color: #00000066;
+}
+
+.sign-up .frame-11 {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: 16px;
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.sign-up .sign-up-with-google {
+  position: relative;
+  width: fit-content;
+  margin-top: -1px;
+  font-family: var(--title-16px-regular-font-family);
+  font-weight: var(--title-16px-regular-font-weight);
+  color: var(--text-2);
+  font-size: var(--title-16px-regular-font-size);
+  letter-spacing: var(--title-16px-regular-letter-spacing);
+  line-height: var(--title-16px-regular-line-height);
+  white-space: nowrap;
+  font-style: var(--title-16px-regular-font-style);
+}
+
+.sign-up .frame-12 {
+  display: inline-flex;
+  align-items: center;
+  gap: 16px;
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.sign-up .text-wrapper-4 {
+  position: relative;
+  width: fit-content;
+  opacity: 0.7;
+  font-family: var(--title-16px-regular-font-family);
+  font-weight: var(--title-16px-regular-font-weight);
+  color: var(--text-2);
+  font-size: var(--title-16px-regular-font-size);
+  letter-spacing: var(--title-16px-regular-letter-spacing);
+  line-height: var(--title-16px-regular-line-height);
+  white-space: nowrap;
+  font-style: var(--title-16px-regular-font-style);
+}
+
+.sign-up .frame-13 {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.sign-up .text-wrapper-5 {
+  position: relative;
+  width: fit-content;
+  margin-top: -1px;
+  opacity: 0.7;
+  font-family: var(--title-16px-medium-font-family);
+  font-weight: var(--title-16px-medium-font-weight);
+  color: var(--text-2);
+  font-size: var(--title-16px-medium-font-size);
+  letter-spacing: var(--title-16px-medium-letter-spacing);
+  line-height: var(--title-16px-medium-line-height);
+  white-space: nowrap;
+  font-style: var(--title-16px-medium-font-style);
+}
+
+.sign-up .under-line-2 {
+  position: relative;
+  width: 47px;
+  height: 1px;
+  opacity: 0.5;
+  background-image: url(https://c.animaapp.com/wbyB8GGY/img/line-1-6.svg);
+  background-size: cover;
+  background-position: 50% 50%;
+}
+
+.sign-up .header {
+  display: inline-flex;
+  align-items: center;
+  gap: 210px;
+  position: absolute;
+  top: 88px;
+  left: 218px;
+}
+
+.sign-up .frame-14 {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: 232px;
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.sign-up .logo {
+  position: relative;
+  width: 118px;
+  height: 24px;
+}
+
+.sign-up .exclusive {
+  position: absolute;
+  top: -1px;
+  left: 0;
+  font-family: var(--heading-24px-bold-font-family);
+  font-weight: var(--heading-24px-bold-font-weight);
+  color: var(--text-2);
+  font-size: var(--heading-24px-bold-font-size);
+  letter-spacing: var(--heading-24px-bold-letter-spacing);
+  line-height: var(--heading-24px-bold-line-height);
+  white-space: nowrap;
+  font-style: var(--heading-24px-bold-font-style);
+}
+
+.sign-up .frame-15 {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: 48px;
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.sign-up .div-wrapper {
+  position: relative;
+  width: 48px;
+  height: 24px;
+}
+
+.sign-up .home {
+  position: absolute;
+  top: -1px;
+  left: 3px;
+  font-family: var(--title-16px-regular-font-family);
+  font-weight: var(--title-16px-regular-font-weight);
+  color: var(--text-2);
+  font-size: var(--title-16px-regular-font-size);
+  text-align: center;
+  letter-spacing: var(--title-16px-regular-letter-spacing);
+  line-height: var(--title-16px-regular-line-height);
+  white-space: nowrap;
+  font-style: var(--title-16px-regular-font-style);
+}
+
+.sign-up .contact-wrapper {
+  position: relative;
+  width: 66px;
+  height: 24px;
+}
+
+.sign-up .contact {
+  position: absolute;
+  top: -1px;
+  left: -5px;
+  font-family: var(--title-16px-regular-font-family);
+  font-weight: var(--title-16px-regular-font-weight);
+  color: var(--text-2);
+  font-size: var(--title-16px-regular-font-size);
+  text-align: center;
+  letter-spacing: var(--title-16px-regular-letter-spacing);
+  line-height: var(--title-16px-regular-line-height);
+  white-space: nowrap;
+  font-style: var(--title-16px-regular-font-style);
+}
+
+.sign-up .about {
+  position: absolute;
+  top: -1px;
+  left: -11px;
+  font-family: var(--title-16px-regular-font-family);
+  font-weight: var(--title-16px-regular-font-weight);
+  color: var(--text-2);
+  font-size: var(--title-16px-regular-font-size);
+  text-align: center;
+  letter-spacing: var(--title-16px-regular-letter-spacing);
+  line-height: var(--title-16px-regular-line-height);
+  white-space: nowrap;
+  font-style: var(--title-16px-regular-font-style);
+}
+
+.sign-up .sign-up-wrapper {
+  position: relative;
+  width: 61px;
+  height: 24px;
+}
+
+.sign-up .text-wrapper-6 {
+  position: absolute;
+  top: -1px;
+  left: -22px;
+  font-family: var(--title-16px-regular-font-family);
+  font-weight: var(--title-16px-regular-font-weight);
+  color: var(--text-2);
+  font-size: var(--title-16px-regular-font-size);
+  text-align: center;
+  letter-spacing: var(--title-16px-regular-letter-spacing);
+  line-height: var(--title-16px-regular-line-height);
+  white-space: nowrap;
+  font-style: var(--title-16px-regular-font-style);
+}
+
+.sign-up .search-component-set-wrapper {
+  display: inline-flex;
+  align-items: center;
+  gap: 24px;
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.sign-up .search-component-set {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 7px 12px 7px 20px;
+  position: relative;
+  flex: 0 0 auto;
+  background-color: var(--secondary);
+  border-radius: 4px;
+}
+
+.sign-up .frame-16 {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 34px;
+  position: relative;
+  flex: 0 0 auto;
+}
+
+.sign-up .what-are-you-looking {
+  position: relative;
+  width: fit-content;
+  opacity: 0.5;
+  font-family: var(--title-12px-regular-font-family);
+  font-weight: var(--title-12px-regular-font-weight);
+  color: var(--text-2);
+  font-size: var(--title-12px-regular-font-size);
+  letter-spacing: var(--title-12px-regular-letter-spacing);
+  line-height: var(--title-12px-regular-line-height);
+  white-space: nowrap;
+  font-style: var(--title-12px-regular-font-style);
+}

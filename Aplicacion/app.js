@@ -1,5 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 const path = require('path');
 const models = require('./accesodatos');
 const dotenv = require('dotenv').config();
@@ -7,7 +8,11 @@ const productoRoutes = require('./presentacion/routes/producto');
 const productosProveedorRoutes = require('./presentacion/routes/productosProveedor');
 const comprasRoutes = require('./presentacion/routes/compras');
 
+
 const app = express();
+
+app.use(cors());
+
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 app.use(express.static(path.join(__dirname, 'presentacion/public')));
@@ -29,7 +34,7 @@ app.get('/oauth2callback', (req, res) => {
   res.send('OAuth2 callback recibido.');
 });
 
-const PORT = process.env.PORT || 3000;
+const PORT = 3200;
 models.sequelize.sync().then(() => {
   app.listen(PORT, () => {
     console.log(`Servidor escuchando en el puerto ${PORT}`);

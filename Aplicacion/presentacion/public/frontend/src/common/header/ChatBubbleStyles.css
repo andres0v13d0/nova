@@ -1,0 +1,81 @@
+.chat-bubble-overlay {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 400px; /* Aumenta el ancho de la ventana del chat */
+  height: 600px; /* Aumenta la altura de la ventana del chat */
+  max-width: 100%;
+  z-index: 1000;
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-end;
+}
+  
+  .chat-bubble-content {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 300px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  
+  .chat-bubble-header {
+    background: linear-gradient(45deg, #2470dd, #101d64);
+    color: white;
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+  }
+  
+  .chat-bubble-close {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+  }
+  
+  .chat-bubble-body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  
+  .chat-bubble-messages {
+    flex: 1;
+    padding: 10px;
+    overflow-y: auto;
+  }
+  
+  .chat-bubble-footer {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-top: 1px solid #ddd;
+  }
+  
+  .chat-bubble-footer input {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    border-radius: 20px;
+    margin-right: 10px;
+    background: #f1f1f1;
+  }
+  
+  .chat-bubble-footer button {
+    background: none;
+    border: none;
+    color: #2470dd;
+    font-size: 20px;
+    cursor: pointer;
+  }
+  
