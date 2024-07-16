@@ -13,7 +13,7 @@ const Cart = ({ CartItem, addToCart, decreaseQty }) => {
           {/* if hamro cart ma kunai pani item xaina bhane no diplay */}
 
           <div className='cart-details'>
-            {CartItem.length === 0 && <h1 className='no-items product'>No Items are add in Cart</h1>}
+            {CartItem.length === 0 && <h1 className='no-items product'>No hay productos agregados</h1>}
 
             {/* yasma hami le cart item lai display garaaxa */}
             {CartItem.map((item) => {
@@ -57,9 +57,9 @@ const Cart = ({ CartItem, addToCart, decreaseQty }) => {
           </div>
 
           <div className='cart-total product'>
-            <h2>Cart Summary</h2>
+            <h2>Detalles de compra</h2>
             <div className=' d_flex'>
-              <h4>Total Price :</h4>
+              <h4>Precio Total :</h4>
               <h3>${totalPrice}.00</h3>
             </div>
           </div>
