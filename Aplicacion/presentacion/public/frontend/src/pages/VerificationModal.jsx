@@ -1,16 +1,20 @@
 import React, { useState } from 'react';
-import { useHistory } from 'react-router-dom'; // Importar useHistory
-import './ModalStyles.css'; // Asegúrate de crear este archivo CSS
+import { useHistory } from 'react-router-dom';
+import './ModalStyles.css';
 
-const VerificationModal = ({ email, onClose }) => {
+const VerificationModal = ({ email, onClose, isForRegistration }) => {
   const [code, setCode] = useState('');
   const [error, setError] = useState('');
-  const history = useHistory(); // Definir useHistory
+  const history = useHistory();
 
   const handleVerification = async (e) => {
     e.preventDefault();
+    const url = isForRegistration 
+      ? 'http://localhost:3200/usuario/verify-registration-code'
+      : 'http://localhost:3200/usuario/verify-code';
+
     try {
-      const response = await fetch('http://localhost:3200/usuario/verify-code', {
+      const response = await fetch(url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -23,8 +27,11 @@ const VerificationModal = ({ email, onClose }) => {
       }
 
       const data = await response.json();
-      // Manejar la respuesta según sea necesario
-      history.push('/reset-password'); // Redirigir a la página de restablecimiento de contraseña
+      if (isForRegistration) {
+        history.push('/login'); // Redirigir a la página de inicio de sesión después del registro exitoso
+      } else {
+        history.push('/reset-password'); // Redirigir a la página de restablecimiento de contraseña
+      }
     } catch (error) {
       setError('Código de verificación incorrecto');
     }
@@ -37,7 +44,7 @@ const VerificationModal = ({ email, onClose }) => {
         {error && <p className="error">{error}</p>}
         <form onSubmit={handleVerification}>
           <div className="form-group">
-            <label htmlFor="code">Ingrese el código de 4 dígitos:</label>
+            <label htmlFor="code">Ingrese el código de 6 dígitos:</label>
             <input
               type="text"
               id="code"
@@ -45,8 +52,8 @@ const VerificationModal = ({ email, onClose }) => {
               value={code}
               onChange={(e) => setCode(e.target.value)}
               required
-              maxLength="4"
-              pattern="\d{4}" // Solo permite 4 dígitos
+              maxLength="6"
+              pattern="\d{6}" 
             />
           </div>
           <button type="submit" className="login-button">Verificar</button>

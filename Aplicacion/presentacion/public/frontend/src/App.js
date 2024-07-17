@@ -8,9 +8,9 @@ import Cart from "./common/Cart/Cart";
 import Footer from "./common/footer/Footer";
 import obtenerProductos from "./components/shops/Sdata";
 import Login from "./pages/Login";
-import Register from "./pages/Register"; // Importa el componente de Registro
-import ForgotPassword from "./pages/ForgotPassword"; // Asegúrate de tener este componente
-import ResetPassword from "./pages/ResetPassword"; // Importa el componente de ResetPassword
+import Register from "./pages/Register";
+import ForgotPassword from "./pages/ForgotPassword";
+import ResetPassword from "./pages/ResetPassword";
 
 // Define y exporta MyContext
 export const MyContext = createContext();

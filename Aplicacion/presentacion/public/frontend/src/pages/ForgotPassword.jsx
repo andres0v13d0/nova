@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from 'react';
 import { MyContext } from '../App';
 import './LoginStyles.css';
 import { useHistory } from 'react-router-dom';
-import VerificationModal from './VerificationModal'; // Asegúrate de crear este componente
+import VerificationModal from './VerificationModal';
 
 const ForgotPassword = () => {
   const { setisHeaderFooterShow } = useContext(MyContext);
@@ -34,7 +34,6 @@ const ForgotPassword = () => {
       }
 
       const data = await response.json();
-      // Manejar la respuesta según sea necesario
       setShowModal(true); // Mostrar el modal al enviar el correo
     } catch (error) {
       setError('Error al solicitar cambio de contraseña');
@@ -60,7 +59,7 @@ const ForgotPassword = () => {
         <button type="submit" className="login-button">Enviar</button>
         <button type="button" onClick={() => history.push('/login')} className="cancel-button">Cancelar</button>
       </form>
-      {showModal && <VerificationModal email={email} onClose={() => setShowModal(false)} />}
+      {showModal && <VerificationModal email={email} onClose={() => setShowModal(false)} isForRegistration={false} />}
     </div>
   );
 };

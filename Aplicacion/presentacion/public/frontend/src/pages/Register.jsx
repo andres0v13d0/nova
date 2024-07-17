@@ -1,25 +1,24 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { MyContext } from '../App'; // Asegúrate de ajustar la ruta de importación según tu estructura de archivos
-import './LoginStyles.css'; // Usamos el mismo archivo de estilos que Login.jsx
-import { useHistory, Link } from 'react-router-dom';
+import { MyContext } from '../App';
+import './LoginStyles.css';
+import { useHistory } from 'react-router-dom';
+import VerificationModal from './VerificationModal'; // Importa el componente de verificación
 
 const Register = () => {
   const { setisHeaderFooterShow } = useContext(MyContext);
-
-  useEffect(() => {
-    // Ocultar header y footer al montar el componente
-    setisHeaderFooterShow(false);
-    return () => {
-      // Mostrar header y footer al desmontar el componente
-      setisHeaderFooterShow(true);
-    };
-  }, [setisHeaderFooterShow]);
-
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
+  const [showModal, setShowModal] = useState(false);
   const history = useHistory();
+
+  useEffect(() => {
+    setisHeaderFooterShow(false);
+    return () => {
+      setisHeaderFooterShow(true);
+    };
+  }, [setisHeaderFooterShow]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -38,25 +37,20 @@ const Register = () => {
       });
 
       if (!response.ok) {
-        throw new Error('Registro fallido');
+        throw new Error('Error al registrarse');
       }
 
       const data = await response.json();
-      localStorage.setItem('token', data.token);
-
-      history.push('/login');
+      // Manejar la respuesta según sea necesario
+      setShowModal(true); // Mostrar el modal para ingresar el código de verificación
     } catch (error) {
-      setError('Error al registrar el usuario');
+      setError('Error al registrarse');
     }
-  };
-
-  const handleCancel = () => {
-    history.push('/');
   };
 
   return (
     <div className="login-container">
-      <h2>Registro</h2>
+      <h2>Registrarse</h2>
       {error && <p className="error">{error}</p>}
       <form onSubmit={handleSubmit}>
         <div className="form-group">
@@ -93,14 +87,15 @@ const Register = () => {
           />
         </div>
         <div className="button-group">
-          <button type="submit" className="login-button">Registrarse</button>
-          <button type="button" onClick={handleCancel} className="cancel-button">Cancelar</button>
-        </div>
-        <div className="login-links">
-          <Link to="/login">Iniciar sesión</Link>
-          <Link to="/forgot-password">Olvidé mi contraseña</Link>
+          <button type="submit" className="login-button">Enviar</button>
+          <button type="button" onClick={() => history.push('/login')} className="cancel-button">Cancelar</button>
         </div>
       </form>
+      <div className="login-links">
+        <a onClick={() => history.push('/login')}>Iniciar sesión</a>
+        <a onClick={() => history.push('/forgot-password')}>Olvidé mi contraseña</a>
+      </div>
+      {showModal && <VerificationModal email={email} onClose={() => setShowModal(false)} />}
     </div>
   );
 };
