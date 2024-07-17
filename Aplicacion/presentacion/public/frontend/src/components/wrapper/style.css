@@ -1,6 +1,22 @@
 .wrapper {
   text-align: center;
 }
+
+.wrapper .container {
+  display: flex;
+  justify-content: center; /* Centrará los elementos horizontalmente */
+  align-items: center; /* Centrará los elementos verticalmente */
+  flex-wrap: wrap; /* Permite que los elementos se envuelvan en múltiples líneas si es necesario */
+}
+
+.wrapper .product {
+  flex: 1; /* Permite que cada producto ocupe un espacio igual */
+  max-width: 300px; /* Limita el ancho máximo de cada producto */
+  padding: 30px;
+  box-sizing: border-box; /* Asegura que el padding no afecte el ancho máximo */
+  text-align: center;
+}
+
 .wrapper .img {
   margin: auto;
   width: 70px;
@@ -8,15 +24,15 @@
   line-height: 70px;
   margin-bottom: 20px;
 }
+
 .wrapper .img i {
   font-size: 25px;
 }
-.wrapper .product {
-  padding: 30px;
-}
+
 .wrapper .product h3 {
   font-weight: 500;
 }
+
 .wrapper p {
   font-size: 15px;
   margin-top: 20px;
