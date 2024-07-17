@@ -1,11 +1,16 @@
 import React, { useState } from "react";
 import logo from "../../components/assets/images/logo.jpg";
 import { Link, useHistory } from "react-router-dom";
-import ChatBubble from "./ChatBubble"; 
-import "./ChatBubbleStyles.css"; 
+import ChatModal from "./ChatModal"; 
+import UserMenu from "./UserMenu"; 
+import "./ChatModalStyles.css"; 
+import "./UserMenu.css"; 
 
 const Search = ({ CartItem, setProductos }) => {
   const [searchTerm, setSearchTerm] = useState('');
+  const [showChatModal, setShowChatModal] = useState(false);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+  const history = useHistory();
 
   const handleSearch = async (e) => {
     setSearchTerm(e.target.value);
@@ -26,16 +31,9 @@ const Search = ({ CartItem, setProductos }) => {
     }
   };
 
-  // fixed Header
-  window.addEventListener("scroll", function () {
-    const search = document.querySelector(".search");
-    search.classList.toggle("active", window.scrollY > 100);
-  });
-  const history = useHistory();
-
-
-  const [showChatBubble, setShowChatBubble] = useState(false);
-
+  const toggleUserMenu = (state) => {
+    setIsUserMenuOpen(state);
+  };
 
   return (
     <>
@@ -59,12 +57,13 @@ const Search = ({ CartItem, setProductos }) => {
           </div>
 
           <div className='icon f_flex width'>
-          <div className="cart" onClick={() => setShowChatBubble(true)}>
+            <div className="cart" onClick={() => setShowChatModal(true)}>
               <i className="fa fa-robot icon-circle"></i>
             </div>
 
-            <div className="cart" onClick={() => history.push('/login')}>
+            <div className="user-menu" onClick={() => toggleUserMenu(!isUserMenuOpen)}>
               <i className="fa fa-user icon-circle"></i>
+              <UserMenu isOpen={isUserMenuOpen} toggleMenu={toggleUserMenu} />
             </div>
 
             <div className='cart'>
@@ -77,7 +76,7 @@ const Search = ({ CartItem, setProductos }) => {
         </div>
       </section>
 
-      <ChatBubble show={showChatBubble} onClose={() => setShowChatBubble(false)} />
+      <ChatModal show={showChatModal} onClose={() => setShowChatModal(false)} />
     </>
   );
 };
