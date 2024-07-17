@@ -23,6 +23,7 @@ CREATE TABLE producto (
     cantidadstock INT,
     categoriaid INT,
     imagen BYTEA,
+    mostrarp BOOLEAN,
     FOREIGN KEY (categoriaid) REFERENCES categoria(categoriaid)
 );
 

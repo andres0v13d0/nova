@@ -87,8 +87,16 @@ const Register = () => {
           />
         </div>
         <div className="button-group">
+<<<<<<< Updated upstream
           <button type="submit" className="login-button">Enviar</button>
           <button type="button" onClick={() => history.push('/login')} className="cancel-button">Cancelar</button>
+=======
+          <button type="submit" className="login-button">Registrarse</button>
+          <button type="button" onClick={handleCancel} className="cancel-button">Cancelar</button>
+        </div>
+        <div className="login-links">
+          <Link to="/login">Iniciar sesión</Link>
+>>>>>>> Stashed changes
         </div>
       </form>
       <div className="login-links">
