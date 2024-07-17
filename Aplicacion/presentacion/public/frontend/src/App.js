@@ -11,6 +11,7 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
+import Checkout from "./pages/Checkout"; // Importa la nueva página de pago
 
 // Define y exporta MyContext
 export const MyContext = createContext();
@@ -76,6 +77,9 @@ function App() {
           </Route>
           <Route path='/reset-password' exact>
             <ResetPassword />
+          </Route>
+          <Route path='/checkout' exact>
+            <Checkout />
           </Route>
           <Route path='/' exact>
             <Pages productItems={productItems} addToCart={addToCart} shopItems={shopItems} />

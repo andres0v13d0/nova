@@ -19,13 +19,13 @@
     max-width: 600px; /* Ajusta este valor para hacer el modal más ancho */
     height: 80%; /* Ajusta este valor para hacer el modal más alto */
     max-height: 700px; /* Ajusta este valor para limitar la altura máxima */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 8px rgba(26, 99, 182, 0.5);
     display: flex;
     flex-direction: column;
   }
   
   .modal-header {
-    background: #007bff;
+    background: rgba(26, 99, 182);
     color: white;
     padding: 10px 20px;
     border-top-left-radius: 8px;
@@ -98,7 +98,7 @@
   .chat-form button {
     padding: 10px 20px;
     border: none;
-    background-color: #007bff;
+    background-color: rgba(26, 99, 182);
     color: white;
     border-radius: 4px;
     cursor: pointer;

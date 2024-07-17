@@ -27,3 +27,12 @@
   left: 0;
   margin: auto;
 }
+
+.homeSlide {
+  width: 100%;
+  height: 80vh; /* Ajusta según tus necesidades */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
