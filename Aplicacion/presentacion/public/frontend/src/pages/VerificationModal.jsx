@@ -1,63 +1,97 @@
 import React, { useState } from 'react';
-import { useHistory } from 'react-router-dom';
-import './ModalStyles.css';
+import './LoginStyles.css';
 
-const VerificationModal = ({ email, onClose, isForRegistration }) => {
-  const [code, setCode] = useState('');
+const VerificationModal = ({ email, onClose, isForRegistration = true }) => {
+  const [codigo, setCodigo] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmNewPassword, setConfirmNewPassword] = useState('');
   const [error, setError] = useState('');
-  const history = useHistory();
+  const [message, setMessage] = useState('');
 
-  const handleVerification = async (e) => {
+  const handleVerify = async (e) => {
     e.preventDefault();
-    const url = isForRegistration 
-      ? 'http://localhost:3200/usuario/verify-registration-code'
-      : 'http://localhost:3200/usuario/verify-code';
+
+    if (!isForRegistration && newPassword !== confirmNewPassword) {
+      setError('Las contraseñas no coinciden');
+      return;
+    }
 
     try {
+      const url = isForRegistration
+        ? 'http://localhost:3200/usuario/confirmar-registro'
+        : 'http://localhost:3200/usuario/establecer-nueva-contrasena';
+
+      const body = isForRegistration
+        ? { correoelectronico: email, codigoConfirmacion: codigo }
+        : { correoelectronico: email, codigo, nuevaContrasena: newPassword };
+
       const response = await fetch(url, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ correoelectronico: email, code }),
+        body: JSON.stringify(body),
       });
 
       if (!response.ok) {
-        throw new Error('Error al verificar el código');
+        throw new Error('Error al confirmar la operación');
       }
 
-      const data = await response.json();
-      if (isForRegistration) {
-        history.push('/login'); // Redirigir a la página de inicio de sesión después del registro exitoso
-      } else {
-        history.push('/reset-password'); // Redirigir a la página de restablecimiento de contraseña
-      }
+      setMessage(isForRegistration ? 'Registro confirmado exitosamente.' : 'Contraseña actualizada exitosamente.');
+      onClose();
     } catch (error) {
-      setError('Código de verificación incorrecto');
+      setError('Error al confirmar la operación');
     }
   };
 
   return (
-    <div className="modal-container">
+    <div className="modal-overlay">
       <div className="modal-content">
-        <h2>Verificación de Código</h2>
+        <h2>{isForRegistration ? 'Verificación de Código' : 'Recuperar Contraseña'}</h2>
         {error && <p className="error">{error}</p>}
-        <form onSubmit={handleVerification}>
+        {message && <p className="message">{message}</p>}
+        <form onSubmit={handleVerify}>
           <div className="form-group">
-            <label htmlFor="code">Ingrese el código de 6 dígitos:</label>
+            <label htmlFor="codigo">Código de Verificación:</label>
             <input
               type="text"
-              id="code"
-              name="code"
-              value={code}
-              onChange={(e) => setCode(e.target.value)}
+              id="codigo"
+              name="codigo"
+              value={codigo}
+              onChange={(e) => setCodigo(e.target.value)}
               required
-              maxLength="6"
-              pattern="\d{6}" 
             />
           </div>
-          <button type="submit" className="login-button">Verificar</button>
-          <button type="button" onClick={onClose} className="cancel-button">Cancelar</button>
+          {!isForRegistration && (
+            <>
+              <div className="form-group">
+                <label htmlFor="newPassword">Nueva Contraseña:</label>
+                <input
+                  type="password"
+                  id="newPassword"
+                  name="newPassword"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="confirmNewPassword">Confirmar Nueva Contraseña:</label>
+                <input
+                  type="password"
+                  id="confirmNewPassword"
+                  name="confirmNewPassword"
+                  value={confirmNewPassword}
+                  onChange={(e) => setConfirmNewPassword(e.target.value)}
+                  required
+                />
+              </div>
+            </>
+          )}
+          <div className="button-group">
+            <button type="submit" className="login-button">{isForRegistration ? 'Verificar' : 'Actualizar Contraseña'}</button>
+            <button type="button" onClick={onClose} className="cancel-button">Cancelar</button>
+          </div>
         </form>
       </div>
     </div>

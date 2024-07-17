@@ -2,13 +2,17 @@ import React, { useContext, useEffect, useState } from 'react';
 import { MyContext } from '../App';
 import './LoginStyles.css';
 import { useHistory } from 'react-router-dom';
-import VerificationModal from './VerificationModal'; // Importa el componente de verificación
+import VerificationModal from './VerificationModal';
 
 const Register = () => {
   const { setisHeaderFooterShow } = useContext(MyContext);
+  const [nombre, setNombre] = useState('');
+  const [apellido, setApellido] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [direccion, setDireccion] = useState('');
+  const [telefono, setTelefono] = useState('');
   const [error, setError] = useState('');
   const [showModal, setShowModal] = useState(false);
   const history = useHistory();
@@ -28,12 +32,20 @@ const Register = () => {
     }
 
     try {
-      const response = await fetch('http://localhost:3200/usuario/register', {
+      const response = await fetch('http://localhost:3200/usuario/registro', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ correoelectronico: email, contrasena: password }),
+        body: JSON.stringify({
+          nombre,
+          apellido,
+          correoelectronico: email,
+          contrasena: password,
+          direccion,
+          telefono,
+          rol: 'cliente'
+        }),
       });
 
       if (!response.ok) {
@@ -41,8 +53,7 @@ const Register = () => {
       }
 
       const data = await response.json();
-      // Manejar la respuesta según sea necesario
-      setShowModal(true); // Mostrar el modal para ingresar el código de verificación
+      setShowModal(true);
     } catch (error) {
       setError('Error al registrarse');
     }
@@ -53,6 +64,28 @@ const Register = () => {
       <h2>Registrarse</h2>
       {error && <p className="error">{error}</p>}
       <form onSubmit={handleSubmit}>
+        <div className="form-group">
+          <label htmlFor="nombre">Nombre:</label>
+          <input
+            type="text"
+            id="nombre"
+            name="nombre"
+            value={nombre}
+            onChange={(e) => setNombre(e.target.value)}
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="apellido">Apellido:</label>
+          <input
+            type="text"
+            id="apellido"
+            name="apellido"
+            value={apellido}
+            onChange={(e) => setApellido(e.target.value)}
+            required
+          />
+        </div>
         <div className="form-group">
           <label htmlFor="email">Correo Electrónico:</label>
           <input
@@ -86,23 +119,36 @@ const Register = () => {
             required
           />
         </div>
+        <div className="form-group">
+          <label htmlFor="direccion">Dirección:</label>
+          <input
+            type="text"
+            id="direccion"
+            name="direccion"
+            value={direccion}
+            onChange={(e) => setDireccion(e.target.value)}
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="telefono">Teléfono:</label>
+          <input
+            type="text"
+            id="telefono"
+            name="telefono"
+            value={telefono}
+            onChange={(e) => setTelefono(e.target.value)}
+            required
+          />
+        </div>
         <div className="button-group">
-<<<<<<< Updated upstream
           <button type="submit" className="login-button">Enviar</button>
           <button type="button" onClick={() => history.push('/login')} className="cancel-button">Cancelar</button>
-=======
-          <button type="submit" className="login-button">Registrarse</button>
-          <button type="button" onClick={handleCancel} className="cancel-button">Cancelar</button>
         </div>
         <div className="login-links">
-          <Link to="/login">Iniciar sesión</Link>
->>>>>>> Stashed changes
+          <a onClick={() => history.push('/login')}>Iniciar sesión</a>
         </div>
       </form>
-      <div className="login-links">
-        <a onClick={() => history.push('/login')}>Iniciar sesión</a>
-        <a onClick={() => history.push('/forgot-password')}>Olvidé mi contraseña</a>
-      </div>
       {showModal && <VerificationModal email={email} onClose={() => setShowModal(false)} />}
     </div>
   );

@@ -21,7 +21,7 @@ const ForgotPassword = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await fetch('http://localhost:3200/usuario/forgot-password', {
+      const response = await fetch('http://localhost:3200/usuario/recuperar-contrasena', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -33,7 +33,6 @@ const ForgotPassword = () => {
         throw new Error('Error al solicitar cambio de contraseña');
       }
 
-      const data = await response.json();
       setShowModal(true); // Mostrar el modal al enviar el correo
     } catch (error) {
       setError('Error al solicitar cambio de contraseña');
