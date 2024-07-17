@@ -1,9 +1,9 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { MyContext } from '../App'; // Asegúrate de ajustar la ruta de importación según tu estructura de archivos
-import './LoginStyles.css';
+import './LoginStyles.css'; // Usamos el mismo archivo de estilos que Login.jsx
 import { useHistory, Link } from 'react-router-dom';
 
-const Login = () => {
+const Register = () => {
   const { setisHeaderFooterShow } = useContext(MyContext);
 
   useEffect(() => {
@@ -17,13 +17,19 @@ const Login = () => {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const history = useHistory();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (password !== confirmPassword) {
+      setError('Las contraseñas no coinciden');
+      return;
+    }
+
     try {
-      const response = await fetch('http://localhost:3200/usuario/login', {
+      const response = await fetch('http://localhost:3200/usuario/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -32,15 +38,15 @@ const Login = () => {
       });
 
       if (!response.ok) {
-        throw new Error('Inicio de sesión fallido');
+        throw new Error('Registro fallido');
       }
 
       const data = await response.json();
       localStorage.setItem('token', data.token);
 
-      history.push('/');
+      history.push('/login');
     } catch (error) {
-      setError('Correo electrónico o contraseña incorrectos');
+      setError('Error al registrar el usuario');
     }
   };
 
@@ -50,7 +56,7 @@ const Login = () => {
 
   return (
     <div className="login-container">
-      <h2>Inicio de Sesión</h2>
+      <h2>Registro</h2>
       {error && <p className="error">{error}</p>}
       <form onSubmit={handleSubmit}>
         <div className="form-group">
@@ -75,17 +81,28 @@ const Login = () => {
             required
           />
         </div>
+        <div className="form-group">
+          <label htmlFor="confirmPassword">Confirmar Contraseña:</label>
+          <input
+            type="password"
+            id="confirmPassword"
+            name="confirmPassword"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            required
+          />
+        </div>
         <div className="button-group">
-          <button type="submit" className="login-button">Iniciar Sesión</button>
+          <button type="submit" className="login-button">Registrarse</button>
           <button type="button" onClick={handleCancel} className="cancel-button">Cancelar</button>
         </div>
         <div className="login-links">
+          <Link to="/login">Iniciar sesión</Link>
           <Link to="/forgot-password">Olvidé mi contraseña</Link>
-          <Link to="/register">Registrarse</Link>
         </div>
       </form>
     </div>
   );
 };
 
-export default Login;
+export default Register;

@@ -2,14 +2,11 @@ import React, { useState } from "react";
 import logo from "../../components/assets/images/logo.jpg";
 import { Link, useHistory } from "react-router-dom";
 import ChatModal from "./ChatModal"; 
-import UserMenu from "./UserMenu"; 
 import "./ChatModalStyles.css"; 
-import "./UserMenu.css"; 
 
 const Search = ({ CartItem, setProductos }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [showChatModal, setShowChatModal] = useState(false);
-  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const history = useHistory();
 
   const handleSearch = async (e) => {
@@ -31,8 +28,8 @@ const Search = ({ CartItem, setProductos }) => {
     }
   };
 
-  const toggleUserMenu = (state) => {
-    setIsUserMenuOpen(state);
+  const handleUserIconClick = () => {
+    history.push('/login');
   };
 
   return (
@@ -61,9 +58,8 @@ const Search = ({ CartItem, setProductos }) => {
               <i className="fa fa-robot icon-circle"></i>
             </div>
 
-            <div className="user-menu" onClick={() => toggleUserMenu(!isUserMenuOpen)}>
+            <div className="user-menu" onClick={handleUserIconClick}>
               <i className="fa fa-user icon-circle"></i>
-              <UserMenu isOpen={isUserMenuOpen} toggleMenu={toggleUserMenu} />
             </div>
 
             <div className='cart'>

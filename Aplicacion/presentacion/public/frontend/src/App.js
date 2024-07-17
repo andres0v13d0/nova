@@ -8,6 +8,9 @@ import Cart from "./common/Cart/Cart";
 import Footer from "./common/footer/Footer";
 import obtenerProductos from "./components/shops/Sdata";
 import Login from "./pages/Login";
+import Register from "./pages/Register"; // Importa el componente de Registro
+import ForgotPassword from "./pages/ForgotPassword"; // Asegúrate de tener este componente
+import ResetPassword from "./pages/ResetPassword"; // Importa el componente de ResetPassword
 
 // Define y exporta MyContext
 export const MyContext = createContext();
@@ -64,6 +67,15 @@ function App() {
         <Switch>
           <Route path='/login' exact>
             <Login />
+          </Route>
+          <Route path='/register' exact>
+            <Register />
+          </Route>
+          <Route path='/forgot-password' exact>
+            <ForgotPassword />
+          </Route>
+          <Route path='/reset-password' exact>
+            <ResetPassword />
           </Route>
           <Route path='/' exact>
             <Pages productItems={productItems} addToCart={addToCart} shopItems={shopItems} />
