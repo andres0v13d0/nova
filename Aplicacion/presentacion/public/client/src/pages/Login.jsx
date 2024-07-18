@@ -50,6 +50,7 @@ const Login = () => {
 
   return (
     <div className="login-container">
+      <img src="/images/logo1.png" alt="Logo" className="login-logo" / > {/* Agrega la imagen aquí */}
       <h2>Inicio de Sesión</h2>
       {error && <p className="error">{error}</p>}
       <form onSubmit={handleSubmit}>
