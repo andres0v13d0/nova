@@ -1,19 +1,29 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "./style.css";
-import { useHistory } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 import VerificationModal from '../../pages/VerificationModal';
 
 const Cart = ({ CartItem, addToCart, decreaseQty }) => {
   const history = useHistory();
+  const location = useLocation();
   const [showModal, setShowModal] = useState(false);
   const [pedidoId, setPedidoId] = useState(null);
 
   const totalPrice = CartItem.reduce((price, item) => price + item.qty * item.price, 0);
 
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const showModal = params.get('showModal');
+    const pedidoId = params.get('pedidoId');
+    if (showModal === 'true') {
+      setShowModal(true);
+      setPedidoId(pedidoId);
+    }
+  }, [location]);
+
   const handleCheckout = async () => {
     try {
-
-      const carritos = CartItem.map(carrito =>({
+      const carritos = CartItem.map(carrito => ({
         nombre: carrito.name,
         productoid: carrito.id,
         precio: carrito.price,
@@ -31,21 +41,16 @@ const Cart = ({ CartItem, addToCart, decreaseQty }) => {
 
       const data = await response.json();
       if (data.success && data.url) {
-          setPedidoId(data.pedidoId);
-          window.location.href = data.url;
+        setPedidoId(data.pedidoId);
+        window.location.href = data.url;
       } else if (!data.success && data.pedidoId) {
-          setPedidoId(data.pedidoId);
-          alert('No se pudo redirigir a PayPal. Intente nuevamente.');
+        alert('No se pudo redirigir a PayPal. Intente nuevamente.');
       } else {
-          throw new Error('Error al crear el pedido: ' + data.error);
+        throw new Error('Error al crear el pedido: ' + data.error);
       }
     } catch (error) {
       alert('Error: ' + error.message);
     }
-  };
-
-  const handlePaymentSuccess = () => {
-    setShowModal(true);
   };
 
   return (

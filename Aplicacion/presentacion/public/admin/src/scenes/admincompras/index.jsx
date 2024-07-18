@@ -1,0 +1,263 @@
+import React, { useState, useEffect } from "react";
+import {
+  Box,
+  Container,
+  Typography,
+  TextField,
+  Select,
+  MenuItem,
+  Button,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Card,
+  CardContent,
+  CardActions,
+} from "@mui/material";
+
+const AdminCompras = () => {
+  const [productos, setProductos] = useState([]);
+  const [carrito, setCarrito] = useState([]);
+  const [categorias, setCategorias] = useState([]);
+  const [empresas, setEmpresas] = useState([]);
+  const [categoriaId, setCategoriaId] = useState("");
+  const [empresaId, setEmpresaId] = useState("");
+  const [buscar, setBuscar] = useState("");
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    // Cargar productos, categorías y empresas aquí
+    // Los datos de ejemplo se utilizarán para la visualización
+    const ejemploProductos = [
+      {
+        nombreproducto: "Producto 1",
+        descripcionproducto: "Descripción 1",
+        precioproducto: "10",
+        categoria: { nombre: "Categoría 1" },
+        proveedor: {
+          empresa: { nombreempresa: "Empresa 1" },
+          nombre: "Dueño 1",
+        },
+      },
+      // Más productos de ejemplo
+    ];
+    const ejemploCategorias = [
+      { categoriaid: 1, nombre: "Categoría 1" },
+      // Más categorías de ejemplo
+    ];
+    const ejemploEmpresas = [
+      { usuarioid: 1, nombreempresa: "Empresa 1" },
+      // Más empresas de ejemplo
+    ];
+
+    setProductos(ejemploProductos);
+    setCategorias(ejemploCategorias);
+    setEmpresas(ejemploEmpresas);
+  }, []);
+
+  const handleBuscar = (event) => {
+    setBuscar(event.target.value.toLowerCase());
+  };
+
+  const handleFiltrarCategoria = (event) => {
+    setCategoriaId(event.target.value);
+  };
+
+  const handleFiltrarEmpresa = (event) => {
+    setEmpresaId(event.target.value);
+  };
+
+  const agregarAlCarrito = (producto) => {
+    const productoEnCarrito = carrito.find(
+      (p) => p.nombreproducto === producto.nombreproducto
+    );
+    if (productoEnCarrito) {
+      productoEnCarrito.cantidad++;
+    } else {
+      producto.cantidad = 1;
+      setCarrito([...carrito, producto]);
+    }
+  };
+
+  const mostrarProductos = () => {
+    const productosFiltrados = productos.filter((producto) => {
+      const categoriaMatch =
+        !categoriaId ||
+        producto.categoria.nombre ===
+          categorias.find((c) => c.categoriaid === categoriaId)?.nombre;
+      const empresaMatch =
+        !empresaId ||
+        producto.proveedor.empresa.nombreempresa ===
+          empresas.find((e) => e.usuarioid === empresaId)?.nombreempresa;
+      const buscarMatch = producto.nombreproducto.toLowerCase().includes(buscar);
+      return categoriaMatch && empresaMatch && buscarMatch;
+    });
+
+    return (
+      <TableContainer component={Paper} sx={{ marginTop: 2 }}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>Nombre</TableCell>
+              <TableCell>Descripción</TableCell>
+              <TableCell>Precio</TableCell>
+              <TableCell>Categoría</TableCell>
+              <TableCell>Empresa</TableCell>
+              <TableCell>Dueño</TableCell>
+              <TableCell>Acciones</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {productosFiltrados.map((producto, index) => (
+              <TableRow key={index}>
+                <TableCell>{producto.nombreproducto}</TableCell>
+                <TableCell>{producto.descripcionproducto}</TableCell>
+                <TableCell>{producto.precioproducto}</TableCell>
+                <TableCell>{producto.categoria.nombre}</TableCell>
+                <TableCell>{producto.proveedor.empresa.nombreempresa}</TableCell>
+                <TableCell>{producto.proveedor.nombre}</TableCell>
+                <TableCell>
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => agregarAlCarrito(producto)}
+                  >
+                    Agregar al Carrito
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    );
+  };
+
+  const mostrarCarrito = () => (
+    <Box sx={{ marginTop: 2 }}>
+      {carrito.map((producto, index) => (
+        <Card key={index} sx={{ marginBottom: 2 }}>
+          <CardContent>
+            <Typography variant="h6">
+              {producto.nombreproducto}
+            </Typography>
+            <Typography>
+              Cantidad: {producto.cantidad} - Precio: {producto.precioproducto}
+            </Typography>
+          </CardContent>
+          <CardActions>
+            <Button
+              variant="outlined"
+              color="secondary"
+              onClick={() => removerDelCarrito(producto)}
+            >
+              Eliminar
+            </Button>
+          </CardActions>
+        </Card>
+      ))}
+    </Box>
+  );
+
+  const removerDelCarrito = (producto) => {
+    setCarrito(carrito.filter((p) => p !== producto));
+  };
+
+  return (
+    <Container>
+      <Box
+        display="flex"
+        flexDirection="column"
+        alignItems="center"
+        margin={2}
+        padding={2}
+        component={Paper}
+        elevation={3}
+      >
+        <Typography variant="h4" gutterBottom>
+          Compras del Administrador
+        </Typography>
+        <Box
+          display="flex"
+          flexDirection="column"
+          alignItems="center"
+          marginBottom={2}
+          width="100%"
+        >
+          <TextField
+            label="Buscar Producto"
+            variant="outlined"
+            value={buscar}
+            onChange={handleBuscar}
+            margin="normal"
+            fullWidth
+          />
+          <Select
+            value={categoriaId}
+            onChange={handleFiltrarCategoria}
+            displayEmpty
+            fullWidth
+            margin="normal"
+          >
+            <MenuItem value="">Todas las Categorías</MenuItem>
+            {categorias.map((categoria) => (
+              <MenuItem key={categoria.categoriaid} value={categoria.categoriaid}>
+                {categoria.nombre}
+              </MenuItem>
+            ))}
+          </Select>
+          <Select
+            value={empresaId}
+            onChange={handleFiltrarEmpresa}
+            displayEmpty
+            fullWidth
+            margin="normal"
+          >
+            <MenuItem value="">Todas las Empresas</MenuItem>
+            {empresas.map((empresa) => (
+              <MenuItem key={empresa.usuarioid} value={empresa.usuarioid}>
+                {empresa.nombreempresa}
+              </MenuItem>
+            ))}
+          </Select>
+        </Box>
+        {mostrarProductos()}
+        <Typography variant="h5" gutterBottom>
+          Carrito de Compras
+        </Typography>
+        {mostrarCarrito()}
+        <Box
+          display="flex"
+          justifyContent="space-between"
+          width="100%"
+          marginTop={2}
+        >
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={() => alert("Compra Finalizada")}
+          >
+            Finalizar Compra
+          </Button>
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={() => alert("Pedido Recibido")}
+          >
+            Pedido Recibido
+          </Button>
+        </Box>
+        {error && <Typography color="error">{error}</Typography>}
+      </Box>
+    </Container>
+  );
+};
+
+export default AdminCompras;
+
+
+
