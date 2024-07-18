@@ -2,13 +2,39 @@ import React, { useState } from 'react';
 import './ChatModalStyles.css';
 
 const ChatModal = ({ show, onClose }) => {
+  const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSendMessage = async (e) => {
     e.preventDefault();
-    // Aquí puedes manejar el envío del mensaje
-    console.log('Mensaje enviado:', message);
-    setMessage(''); // Limpia el campo del mensaje después de enviar
+
+    if (!message.trim()) return;
+
+    const newMessage = { sender: 'user', text: message };
+    setMessages([...messages, newMessage]);
+    setMessage('');
+
+    try {
+      const response = await fetch('http://localhost:3200/asistente/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ message }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Error en la respuesta del servidor');
+      }
+
+      const botMessageText = await response.text();
+      const botMessage = { sender: 'bot', text: botMessageText };
+      setMessages((prevMessages) => [...prevMessages, botMessage]);
+    } catch (error) {
+      console.error('Error al enviar mensaje:', error);
+      const errorMessage = { sender: 'bot', text: 'Error al enviar mensaje, por favor intenta de nuevo.' };
+      setMessages((prevMessages) => [...prevMessages, errorMessage]);
+    }
   };
 
   if (!show) {
@@ -31,13 +57,17 @@ const ChatModal = ({ show, onClose }) => {
           </button>
         </div>
         <div className="modal-body">
-          <div className="chat-message">
-            <img src="/images/ia.jpg" alt="Profile" className="message-image" />
-            <div className="message-text">
-              <p>Necesitas ayuda con periferico o componente, aqui estoy para ayudarte¡</p>
-            </div>
+          <div className="chat-messages">
+            {messages.map((msg, index) => (
+              <div key={index} className={`chat-message ${msg.sender}`}>
+                <img src="/images/ia.jpg" alt="Profile" className="message-image" />
+                <div className="message-text">
+                  <p>{msg.text}</p>
+                </div>
+              </div>
+            ))}
           </div>
-          <form onSubmit={handleSubmit} className="chat-form">
+          <form onSubmit={handleSendMessage} className="chat-form">
             <input
               type="text"
               placeholder="Preguntar..."
