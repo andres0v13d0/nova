@@ -86,7 +86,7 @@ router.get('/pago-exitoso', async (req, res) => {
 
 router.get('/pago-cancelado', (req, res) => {
     const { pedidoId } = req.query;
-    // Aquí puedes manejar la lógica cuando se cancela un pago
+    
     res.json({ success: false, message: 'Pago cancelado', pedidoId: pedidoId });
 });
 
