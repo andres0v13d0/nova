@@ -8,3 +8,4 @@ Aplicacion/fetchRucInfo.js
 Aplicacion/logica/services/tokenRuc.js
 Aplicacion/logica/services/tokenGPT.js
 Aplicacion/inicializarapp.js
+tokenPayPal.js

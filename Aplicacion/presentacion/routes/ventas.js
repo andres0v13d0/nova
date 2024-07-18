@@ -2,13 +2,13 @@ const express = require('express');
 const router = express.Router();
 const paypal = require('paypal-rest-sdk');
 const ventasService = require('../../logica/services/ventasService');
-const authService = require('../../logica/services/authService'); 
-const usuarioService = require('../../logica/services/usuarioService'); 
+const authService = require('../../logica/services/authService');
+const config = require('./tokenPayPal');
 
 paypal.configure({
-    'mode': 'sandbox', 
-    'client_id': 'Adui5Z3fsMKMcXpn3BFVcdQNeIqVTrPHAsNulxEeY_tPJuQZNDpTuzrZ5iDtc5s17EmSBgdsRVZ8YPnr', 
-    'client_secret': 'EPQVDjhj9uLbdnw-lv-X--Ey02ou9cEo2RPygNtoRUnWhURjFokX6w5synaIRVXAZX3USsYeuikX3OzJ' 
+    'mode': config.paypal.mode,
+    'client_id': config.paypal.client_id,
+    'client_secret': config.paypal.client_secret
 });
 
 router.post('/crear-pedido', async (req, res) => {
@@ -24,8 +24,8 @@ router.post('/crear-pedido', async (req, res) => {
                 "payment_method": "paypal"
             },
             "redirect_urls": {
-                "return_url": `http://localhost:3000/ventas/pago-exitoso?pedidoId=${pedido.pedidoid}`,
-                "cancel_url": "http://localhost:3000/ventas/pago-cancelado"
+                "return_url": `http://localhost:3200/ventas/pago-exitoso?pedidoId=${pedido.pedidoid}`,
+                "cancel_url": `http://localhost:3200/ventas/pago-cancelado?pedidoId=${pedido.pedidoid}`
             },
             "transactions": [{
                 "item_list": {
@@ -47,91 +47,47 @@ router.post('/crear-pedido', async (req, res) => {
 
         paypal.payment.create(create_payment_json, (error, payment) => {
             if (error) {
-                throw error;
+                res.status(500).json({ success: false, error: error.message, pedidoId: pedido.pedidoid });
             } else {
                 for (let i = 0; i < payment.links.length; i++) {
                     if (payment.links[i].rel === 'approval_url') {
-                        res.json({ url: payment.links[i].href });
+                        return res.json({ success: true, url: payment.links[i].href, pedidoId: pedido.pedidoid });
                     }
                 }
+                res.status(500).json({ success: false, error: 'No se encontró la URL de aprobación', pedidoId: pedido.pedidoid });
             }
         });
     } catch (error) {
-        res.status(500).json({ error: error.message });
+        res.status(500).json({ success: false, error: error.message });
     }
 });
 
 router.get('/pago-exitoso', async (req, res) => {
-    const payerId = req.query.PayerID;
-    const paymentId = req.query.paymentId;
-    const pedidoId = req.query.pedidoId;
+    const { PayerID, paymentId, pedidoId } = req.query;
 
     const execute_payment_json = {
-        "payer_id": payerId
+        "payer_id": PayerID
     };
 
     paypal.payment.execute(paymentId, execute_payment_json, async (error, payment) => {
         if (error) {
             console.error(error.response);
-            throw error;
+            res.json({ success: false });
         } else {
             try {
                 await ventasService.registrarVenta(pedidoId);
-                res.send(`
-                    <!DOCTYPE html>
-                    <html lang="es">
-                    <head>
-                        <meta charset="UTF-8">
-                        <title>Calificar Satisfacción</title>
-                    </head>
-                    <body>
-                        <h1>Pago completado con éxito</h1>
-                        <h2>Califique su experiencia</h2>
-                        <div class="form-group">
-                            <label for="calificacion">Calificación:</label>
-                            <input type="number" id="calificacion" min="1" max="5">
-                        </div>
-                        <div class="form-group">
-                            <label for="comentario">Comentario:</label>
-                            <textarea id="comentario"></textarea>
-                        </div>
-                        <button onclick="enviarFeedback(${pedidoId})">Enviar Calificación</button>
-                        <div id="error-container" class="error"></div>
-
-                        <script>
-                            async function enviarFeedback(pedidoId) {
-                                const calificacion = document.getElementById('calificacion').value;
-                                const comentario = document.getElementById('comentario').value;
-                                const errorContainer = document.getElementById('error-container');
-
-                                try {
-                                    const response = await fetch('/feedback/registrar', {
-                                        method: 'POST',
-                                        headers: {
-                                            'Content-Type': 'application/json'
-                                        },
-                                        body: JSON.stringify({ pedidoid: pedidoId, calificacion: calificacion, comentario: comentario, fecha: new Date() })
-                                    });
-                                    if (!response.ok) throw new Error(await response.text());
-                                    alert('Feedback enviado exitosamente');
-                                    window.location.href = 'http://localhost:3000/catalogo.html';
-                                } catch (error) {
-                                    errorContainer.textContent = error.message;
-                                }
-                            }
-                        </script>
-                    </body>
-                    </html>
-                `);
+                res.json({ success: true, pedidoId: pedidoId });
             } catch (error) {
-                res.status(500).send('Error registrando la venta: ' + error.message);
+                res.status(500).json({ success: false, error: 'Error registrando la venta: ' + error.message });
             }
         }
     });
 });
 
 router.get('/pago-cancelado', (req, res) => {
-    res.send('Pago cancelado');
+    const { pedidoId } = req.query;
+    // Aquí puedes manejar la lógica cuando se cancela un pago
+    res.json({ success: false, message: 'Pago cancelado', pedidoId: pedidoId });
 });
 
 module.exports = router;

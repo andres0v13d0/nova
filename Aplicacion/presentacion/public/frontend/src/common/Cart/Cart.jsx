@@ -1,12 +1,52 @@
-import React from "react";
+import React, { useState } from "react";
 import "./style.css";
 import { useHistory } from "react-router-dom";
+import VerificationModal from '../../pages/VerificationModal';
 
 const Cart = ({ CartItem, addToCart, decreaseQty }) => {
   const history = useHistory();
+  const [showModal, setShowModal] = useState(false);
+  const [pedidoId, setPedidoId] = useState(null);
 
-  // Step: 7 Calculate total of items
   const totalPrice = CartItem.reduce((price, item) => price + item.qty * item.price, 0);
+
+  const handleCheckout = async () => {
+    try {
+
+      const carritos = CartItem.map(carrito =>({
+        nombre: carrito.name,
+        productoid: carrito.id,
+        precio: carrito.price,
+        cantidad: carrito.qty
+      }));
+
+      const response = await fetch('http://localhost:3200/ventas/crear-pedido', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify({ carrito: carritos })
+      });
+
+      const data = await response.json();
+      if (data.success && data.url) {
+          setPedidoId(data.pedidoId);
+          window.location.href = data.url;
+      } else if (!data.success && data.pedidoId) {
+          setPedidoId(data.pedidoId);
+          alert('No se pudo redirigir a PayPal. Intente nuevamente.');
+      } else {
+          throw new Error('Error al crear el pedido: ' + data.error);
+      }
+    } catch (error) {
+      alert('Error: ' + error.message);
+    }
+  };
+
+  const handlePaymentSuccess = () => {
+    setShowModal(true);
+  };
 
   return (
     <>
@@ -26,8 +66,8 @@ const Cart = ({ CartItem, addToCart, decreaseQty }) => {
                   <div className='cart-details'>
                     <h3>{item.name}</h3>
                     <h4>
-                      ${item.price}.00 * {item.qty}
-                      <span>${productQty}.00</span>
+                      ${item.price} * {item.qty}
+                      <span>${productQty}</span>
                     </h4>
                   </div>
                   <div className='cart-items-function'>
@@ -55,10 +95,10 @@ const Cart = ({ CartItem, addToCart, decreaseQty }) => {
             <h2>Detalles de compra</h2>
             <div className='d_flex'>
               <h4>Precio Total :</h4>
-              <h3 className='price-text'>${totalPrice}.00</h3>
+              <h3 className='price-text'>${totalPrice}</h3>
             </div>
             <div className="button-group">
-              <button className="checkout-button" onClick={() => history.push('/checkout')}>
+              <button className="checkout-button" onClick={handleCheckout}>
                 Pagar
               </button>
               <button className="continue-shopping-button" onClick={() => history.push('/')}>
@@ -68,6 +108,7 @@ const Cart = ({ CartItem, addToCart, decreaseQty }) => {
           </div>
         </div>
       </section>
+      {showModal && <VerificationModal email={localStorage.getItem('email')} onClose={() => setShowModal(false)} isForRegistration={false} pedidoId={pedidoId} />}
     </>
   );
 };

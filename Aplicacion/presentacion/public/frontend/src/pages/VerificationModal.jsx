@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import './LoginStyles.css';
+import './ModalStyles.css';
 
-const VerificationModal = ({ email, onClose, isForRegistration = true }) => {
+const VerificationModal = ({ email, onClose, isForRegistration = true, pedidoId = null }) => {
   const [codigo, setCodigo] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmNewPassword, setConfirmNewPassword] = useState('');
@@ -41,6 +41,31 @@ const VerificationModal = ({ email, onClose, isForRegistration = true }) => {
       onClose();
     } catch (error) {
       setError('Error al confirmar la operación');
+    }
+  };
+
+  const handleFeedbackSubmit = async () => {
+    const calificacion = document.getElementById('calificacion').value;
+    const comentario = document.getElementById('comentario').value;
+
+    try {
+      const response = await fetch('http://localhost:3200/feedback/registrar', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ pedidoid: pedidoId, calificacion, comentario, fecha: new Date() })
+      });
+
+      if (!response.ok) {
+        throw new Error('Error al enviar la calificación');
+      }
+
+      alert('Feedback enviado exitosamente');
+      onClose();
+      window.location.href = '/';
+    } catch (error) {
+      setError(error.message);
     }
   };
 
@@ -93,6 +118,21 @@ const VerificationModal = ({ email, onClose, isForRegistration = true }) => {
             <button type="button" onClick={onClose} className="cancel-button">Cancelar</button>
           </div>
         </form>
+
+        {!isForRegistration && pedidoId && (
+          <>
+            <h2>Califique su experiencia</h2>
+            <div className="form-group">
+              <label htmlFor="calificacion">Calificación:</label>
+              <input type="number" id="calificacion" min="1" max="5" />
+            </div>
+            <div className="form-group">
+              <label htmlFor="comentario">Comentario:</label>
+              <textarea id="comentario"></textarea>
+            </div>
+            <button onClick={handleFeedbackSubmit}>Enviar Calificación</button>
+          </>
+        )}
       </div>
     </div>
   );

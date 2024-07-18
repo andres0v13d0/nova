@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { MyContext } from '../App';
-import './LoginStyles.css';
+import './RegisterStyles.css';
 import { useHistory } from 'react-router-dom';
 import VerificationModal from './VerificationModal';
 
