@@ -19,13 +19,18 @@ const Form = () => {
   useEffect(() => {
     const fetchUserInfo = async () => {
       const token = localStorage.getItem('token');
-      const response = await fetch('/usuario/info', {
+      const response = await fetch('http://localhost:3200/usuario/info', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
       });
-      const usuario = await response.json();
-      setUsuario(usuario);
+      
+      if (response.ok) {
+        const usuario = await response.json();
+        setUsuario(usuario);
+      } else {
+        console.error('Error fetching user info');
+      }
     };
     fetchUserInfo();
   }, []);
@@ -33,7 +38,7 @@ const Form = () => {
   const handleFormSubmit = async (values) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('/usuario/actualizar', {
+      const response = await fetch('http://localhost:3200/usuario/actualizar', {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -174,6 +179,5 @@ const Form = () => {
     </Box>
   );
 };
-
 
 export default Form;

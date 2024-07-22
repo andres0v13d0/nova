@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { Box, Button, Typography, TextField, Modal, useTheme   } from "@mui/material";
+import { Box, Button, Typography, TextField, Modal, useTheme } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { tokens } from "../../theme";
-import { mockDataInvoices } from "../../data/mockData";
 import Header from "../../components/Header";
 
 const Invoices = () => {
@@ -71,7 +70,7 @@ const Invoices = () => {
 
   const cargarProductos = async () => {
     try {
-      const response = await fetch('/inventario/productos');
+      const response = await fetch('http://localhost:3200/inventario/productos');
       if (!response.ok) {
         throw new Error("Error al cargar productos");
       }
@@ -85,7 +84,7 @@ const Invoices = () => {
 
   const cargarCategorias = async () => {
     try {
-      const response = await fetch('/inventario/categorias');
+      const response = await fetch('http://localhost:3200/inventario/categorias');
       if (!response.ok) {
         throw new Error("Error al cargar categorías");
       }
@@ -104,7 +103,7 @@ const Invoices = () => {
 
   const handleDeleteProduct = async (productId) => {
     try {
-      const response = await fetch(`/inventario/productos/${productId}`, {
+      const response = await fetch(`http://localhost:3200/inventario/productos/${productId}`, {
         method: 'DELETE',
       });
       if (!response.ok) {
@@ -122,12 +121,32 @@ const Invoices = () => {
   };
 
   const handleSaveChanges = async () => {
-    // Aquí deberías implementar la lógica para guardar los cambios del producto seleccionado
-    // Usaríamos `selectedProduct` para enviar los datos modificados al servidor
-    // Por simplicidad, aquí se debería realizar la llamada a la API para actualizar el producto
-    setIsModalOpen(false);
-    setSelectedProduct(null);
-    cargarProductos(); // Recargar los productos después de modificar
+    if (!selectedProduct) return;
+    try {
+      const response = await fetch(`http://localhost:3200/inventario/productos/${selectedProduct.productoid}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(selectedProduct)
+      });
+      if (!response.ok) {
+        throw new Error("Error al guardar cambios del producto");
+      }
+      setIsModalOpen(false);
+      setSelectedProduct(null);
+      cargarProductos();
+    } catch (error) {
+      setError(error.message);
+    }
+  };
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setSelectedProduct(prev => ({
+      ...prev,
+      [name]: value
+    }));
   };
 
   return (
@@ -141,52 +160,57 @@ const Invoices = () => {
       </Box>
 
       <Box height="75vh" width="100%">
-        <DataGrid rows={productos} columns={columns} />
+        <DataGrid rows={productos} columns={columns} getRowId={(row) => row.productoid} />
       </Box>
 
       {/* Modal para editar producto */}
       <Modal open={isModalOpen} onClose={handleCloseModal}>
         <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', bgcolor: 'background.paper', boxShadow: 24, p: 4, width: 400 }}>
           <Typography variant="h6" gutterBottom>
-            Editar Producto
+            {selectedProduct ? "Editar Producto" : "Agregar Producto"}
           </Typography>
           <TextField
             fullWidth
             margin="normal"
             label="Nombre"
+            name="nombre"
             value={selectedProduct ? selectedProduct.nombre : ''}
-            // onChange={handleInputChange}
+            onChange={handleInputChange}
           />
           <TextField
             fullWidth
             margin="normal"
             label="Descripción"
+            name="descripcion"
             value={selectedProduct ? selectedProduct.descripcion : ''}
-            // onChange={handleInputChange}
+            onChange={handleInputChange}
           />
           <TextField
             fullWidth
             margin="normal"
             label="Precio"
             type="number"
+            name="precio"
             value={selectedProduct ? selectedProduct.precio : ''}
-            // onChange={handleInputChange}
+            onChange={handleInputChange}
           />
           <TextField
             fullWidth
             margin="normal"
             label="Cantidad en Stock"
             type="number"
+            name="cantidadstock"
             value={selectedProduct ? selectedProduct.cantidadstock : ''}
-            // onChange={handleInputChange}
+            onChange={handleInputChange}
           />
           <TextField
             fullWidth
             margin="normal"
             label="ID Categoría"
             type="number"
+            name="categoriaid"
             value={selectedProduct ? selectedProduct.categoriaid : ''}
-            // onChange={handleInputChange}
+            onChange={handleInputChange}
           />
           <Button variant="contained" color="primary" onClick={handleSaveChanges}>
             Guardar Cambios

@@ -30,33 +30,40 @@ const AdminCompras = () => {
   const [error, setError] = useState("");
 
   useEffect(() => {
-    // Cargar productos, categorías y empresas aquí
-    // Los datos de ejemplo se utilizarán para la visualización
-    const ejemploProductos = [
-      {
-        nombreproducto: "Producto 1",
-        descripcionproducto: "Descripción 1",
-        precioproducto: "10",
-        categoria: { nombre: "Categoría 1" },
-        proveedor: {
-          empresa: { nombreempresa: "Empresa 1" },
-          nombre: "Dueño 1",
-        },
-      },
-      // Más productos de ejemplo
-    ];
-    const ejemploCategorias = [
-      { categoriaid: 1, nombre: "Categoría 1" },
-      // Más categorías de ejemplo
-    ];
-    const ejemploEmpresas = [
-      { usuarioid: 1, nombreempresa: "Empresa 1" },
-      // Más empresas de ejemplo
-    ];
+    const fetchData = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const [productosRes, categoriasRes, empresasRes] = await Promise.all([
+          fetch('http://localhost:3200/compras/productos', {
+            headers: { 'Authorization': `Bearer ${token}` }
+          }),
+          fetch('http://localhost:3200/compras/categorias', {
+            headers: { 'Authorization': `Bearer ${token}` }
+          }),
+          fetch('http://localhost:3200/compras/empresas', {
+            headers: { 'Authorization': `Bearer ${token}` }
+          })
+        ]);
 
-    setProductos(ejemploProductos);
-    setCategorias(ejemploCategorias);
-    setEmpresas(ejemploEmpresas);
+        if (!productosRes.ok || !categoriasRes.ok || !empresasRes.ok) {
+          throw new Error('Error fetching data');
+        }
+
+        const [productosData, categoriasData, empresasData] = await Promise.all([
+          productosRes.json(),
+          categoriasRes.json(),
+          empresasRes.json()
+        ]);
+
+        setProductos(productosData);
+        setCategorias(categoriasData);
+        setEmpresas(empresasData);
+      } catch (error) {
+        setError(error.message);
+      }
+    };
+
+    fetchData();
   }, []);
 
   const handleBuscar = (event) => {
@@ -258,6 +265,3 @@ const AdminCompras = () => {
 };
 
 export default AdminCompras;
-
-
-

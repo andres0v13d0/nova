@@ -149,7 +149,7 @@ const Register = () => {
           <a onClick={() => history.push('/login')}>Iniciar sesión</a>
         </div>
       </form>
-      {showModal && <VerificationModal email={email} onClose={() => setShowModal(false)} />}
+      {showModal && <VerificationModal email={email} operation="registration" onClose={() => setShowModal(false)} />}
     </div>
   );
 };

@@ -1,11 +1,8 @@
+import React from 'react';
 import { Box, IconButton, useTheme } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { useEffect, useState } from "react";
 import { tokens } from "../../theme";
-import { mockDataTeam } from "../../data/mockData";
-//import AdminPanelSettingsOutlinedIcon from "@mui/icons-material/AdminPanelSettingsOutlined";
-//import LockOpenOutlinedIcon from "@mui/icons-material/LockOpenOutlined";
-//import SecurityOutlinedIcon from "@mui/icons-material/SecurityOutlined";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Header from "../../components/Header";
@@ -18,7 +15,7 @@ const Team = () => {
   useEffect(() => {
     const fetchUsers = async () => {
       const token = localStorage.getItem('token');
-      const response = await fetch('/usuario/usuarios', {
+      const response = await fetch('http://localhost:3200/usuario/usuarios', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -43,7 +40,7 @@ const Team = () => {
   const handleDeleteClick = async (id) => {
     // Lógica para manejar la acción de eliminar aquí
     const token = localStorage.getItem('token');
-    const response = await fetch('/usuario/eliminar', {
+    const response = await fetch('http://localhost:3200/usuario/eliminar', {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',

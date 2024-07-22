@@ -1,23 +1,25 @@
 import React, { useState, useEffect } from "react";
 import "./style.css";
 import { useHistory, useLocation } from "react-router-dom";
-import VerificationModal from '../../pages/VerificationModal';
 
 const Cart = ({ CartItem, addToCart, decreaseQty }) => {
   const history = useHistory();
   const location = useLocation();
-  const [showModal, setShowModal] = useState(false);
   const [pedidoId, setPedidoId] = useState(null);
 
   const totalPrice = CartItem.reduce((price, item) => price + item.qty * item.price, 0);
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
-    const showModal = params.get('showModal');
     const pedidoId = params.get('pedidoId');
-    if (showModal === 'true') {
-      setShowModal(true);
+    const paymentStatus = params.get('payment');
+
+    if (pedidoId) {
       setPedidoId(pedidoId);
+    }
+
+    if (paymentStatus === 'cancelled' || paymentStatus === 'failed') {
+      alert('Pago cancelado o fallido. Por favor, intente de nuevo.');
     }
   }, [location]);
 
@@ -100,7 +102,7 @@ const Cart = ({ CartItem, addToCart, decreaseQty }) => {
             <h2>Detalles de compra</h2>
             <div className='d_flex'>
               <h4>Precio Total :</h4>
-              <h3 className='price-text'>${totalPrice}</h3>
+              <h3 className='price-text'>${totalPrice.toFixed(2)}</h3>
             </div>
             <div className="button-group">
               <button className="checkout-button" onClick={handleCheckout}>
@@ -113,7 +115,6 @@ const Cart = ({ CartItem, addToCart, decreaseQty }) => {
           </div>
         </div>
       </section>
-      {showModal && <VerificationModal email={localStorage.getItem('email')} onClose={() => setShowModal(false)} isForRegistration={false} pedidoId={pedidoId} />}
     </>
   );
 };

@@ -72,13 +72,14 @@ router.get('/pago-exitoso', async (req, res) => {
     paypal.payment.execute(paymentId, execute_payment_json, async (error, payment) => {
         if (error) {
             console.error(error.response);
-            res.json({ success: false });
+            res.redirect(`http://localhost:3000/cart?payment=cancelled&pedidoId=${pedidoId}`);
         } else {
             try {
                 await ventasService.registrarVenta(pedidoId);
-                res.json({ success: true, pedidoId: pedidoId });
+                res.redirect(`http://localhost:3000/?payment=success&pedidoId=${pedidoId}`);
             } catch (error) {
                 res.status(500).json({ success: false, error: 'Error registrando la venta: ' + error.message });
+                res.redirect(`http://localhost:3000/cart?payment=cancelled&pedidoId=${pedidoId}`);
             }
         }
     });
@@ -87,7 +88,7 @@ router.get('/pago-exitoso', async (req, res) => {
 router.get('/pago-cancelado', (req, res) => {
     const { pedidoId } = req.query;
     
-    res.json({ success: false, message: 'Pago cancelado', pedidoId: pedidoId });
+    res.redirect(`http://localhost:3000/cart?payment=cancelled&pedidoId=${pedidoId}`);
 });
 
 module.exports = router;

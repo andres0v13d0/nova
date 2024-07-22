@@ -58,7 +58,7 @@ const ForgotPassword = () => {
         <button type="submit" className="login-button">Enviar</button>
         <button type="button" onClick={() => history.push('/login')} className="cancel-button">Cancelar</button>
       </form>
-      {showModal && <VerificationModal email={email} onClose={() => setShowModal(false)} isForRegistration={false} />}
+      {showModal && <VerificationModal email={email} operation="resetPassword" onClose={() => setShowModal(false)} />}
     </div>
   );
 };
