@@ -3,8 +3,6 @@ import { Box, IconButton, useTheme } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { useEffect, useState } from "react";
 import { tokens } from "../../theme";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
 import Header from "../../components/Header";
 
 const Team = () => {
@@ -32,28 +30,25 @@ const Team = () => {
     fetchUsers();
   }, []);
 
-  const handleEditClick = (id) => {
-    // Lógica para manejar la acción de editar aquí
-    console.log("Editar usuario con ID:", id);
-  };
-
-  const handleDeleteClick = async (id) => {
-    // Lógica para manejar la acción de eliminar aquí
+  const handleRoleChangeClick = async (id, currentRole) => {
+    const newRole = currentRole === 'cliente' ? 'administrador' : 'cliente';
     const token = localStorage.getItem('token');
-    const response = await fetch('http://localhost:3200/usuario/eliminar', {
-      method: 'DELETE',
+    const response = await fetch('http://localhost:3200/usuario/cambiar-rol', {
+      method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`
       },
-      body: JSON.stringify({ usuarioid: id })
+      body: JSON.stringify({ usuarioid: id, rol: newRole })
     });
 
     if (response.ok) {
-      alert('Usuario eliminado');
-      setUsers(users.filter(user => user.usuarioid !== id));
+      alert(`Rol cambiado a ${newRole}`);
+      setUsers(users.map(user => 
+        user.usuarioid === id ? { ...user, rol: newRole } : user
+      ));
     } else {
-      console.error('Error eliminando el usuario');
+      console.error('Error cambiando el rol del usuario');
     }
   };
 
@@ -92,26 +87,17 @@ const Team = () => {
       flex: 1,
     },
     {
-      field: "edit",
-      headerName: "Editar",
+      field: "changeRole",
+      headerName: "Cambiar Rol",
       sortable: false,
-      width: 100,
+      width: 160,
       disableClickEventBubbling: true,
       renderCell: (params) => (
-        <IconButton aria-label="editar" onClick={() => handleEditClick(params.row.usuarioid)}>
-          <EditIcon />
-        </IconButton>
-      ),
-    },
-    {
-      field: "delete",
-      headerName: "Eliminar",
-      sortable: false,
-      width: 120,
-      disableClickEventBubbling: true,
-      renderCell: (params) => (
-        <IconButton aria-label="eliminar" onClick={() => handleDeleteClick(params.row.usuarioid)}>
-          <DeleteIcon />
+        <IconButton 
+          aria-label="cambiar rol" 
+          onClick={() => handleRoleChangeClick(params.row.usuarioid, params.row.rol)}
+        >
+          {params.row.rol === 'cliente' ? 'Cambiar a Administrador' : 'Cambiar a Cliente'}
         </IconButton>
       ),
     },
