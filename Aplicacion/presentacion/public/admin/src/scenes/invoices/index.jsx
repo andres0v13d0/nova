@@ -28,7 +28,7 @@ const Invoices = () => {
       ),
     },
     { field: "cantidadstock", headerName: "Stock", type: "number", flex: 1 },
-    { field: "categoriaid", headerName: "ID Categoría", type: "number", flex: 1 },
+    { field: "nombre", headerName: "Categoría", flex: 1 },
     {
       field: "imagen",
       headerName: "Imagen",
