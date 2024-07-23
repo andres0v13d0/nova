@@ -93,16 +93,14 @@ const Login = () => {
             </button>
           </span>
         </div>
-        <div className="form-group">
-          <div className="remember-me">
-            <input
-              type="checkbox"
-              id="rememberMe"
-              checked={rememberMe}
-              onChange={(e) => setRememberMe(e.target.checked)}
-            />
-            <label htmlFor="rememberMe">Recordar contraseña</label>
-          </div>
+        <div className="form-group remember-me">
+          <input
+            type="checkbox"
+            id="rememberMe"
+            checked={rememberMe}
+            onChange={(e) => setRememberMe(e.target.checked)}
+          />
+          <label htmlFor="rememberMe">Recordar contraseña</label>
         </div>
         <div className="button-group">
           <button type="submit" className="login-button">Iniciar Sesión</button>
