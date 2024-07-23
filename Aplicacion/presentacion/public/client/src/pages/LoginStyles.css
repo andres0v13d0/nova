@@ -1,3 +1,12 @@
+.login-page {
+  background: linear-gradient(to right, #007bff, #00d4ff);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  margin: 0;
+}
+
 .login-container {
   display: flex;
   flex-direction: column;
@@ -9,11 +18,10 @@
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
   max-width: 400px;
   width: 100%;
+  border: 2px solid #0000ff;
 }
 
-.login-container h2 {
-  margin-bottom: 20px;
-}
+
 
 .form-group {
   margin-bottom: 15px;

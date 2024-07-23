@@ -55,62 +55,65 @@ const Login = () => {
   };
 
   return (
-    <div className="login-container">
-      <img src="/images/logo1.png" alt="Logo" className="login-logo" />
-      <h2>Inicio de Sesión</h2>
-      {error && <p className="error">{error}</p>}
-      <form onSubmit={handleSubmit}>
-        <div className="p-inputgroup flex-1 form-group">
-          <span className="p-inputgroup-addon">
-            <i className="pi pi-envelope"></i>
-          </span>
-          <InputText
-            type="email"
-            id="email"
-            name="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="Correo Electrónico"
-            required
-          />
-        </div>
-        <div className="p-inputgroup flex-1 form-group">
-          <span className="p-inputgroup-addon">
-            <i className="pi pi-lock"></i>
-          </span>
-          <InputText
-            type={showPassword ? "text" : "password"}
-            id="password"
-            name="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="Contraseña"
-            required
-          />
-          <span className="p-inputgroup-addon">
-            <button type="button" onClick={() => setShowPassword(!showPassword)}>
-              <i className={showPassword ? "pi pi-eye-slash" : "pi pi-eye"}></i>
-            </button>
-          </span>
-        </div>
-        <div className="form-group remember-me">
-          <input
-            type="checkbox"
-            id="rememberMe"
-            checked={rememberMe}
-            onChange={(e) => setRememberMe(e.target.checked)}
-          />
-          <label htmlFor="rememberMe">Recordar contraseña</label>
-        </div>
-        <div className="button-group">
-          <button type="submit" className="login-button">Iniciar Sesión</button>
-          <button type="button" onClick={handleCancel} className="cancel-button">Cancelar</button>
-        </div>
-        <div className="login-links">
-          <Link to="/forgot-password">Olvidé mi contraseña</Link>
-          <Link to="/register">Registrarse</Link>
-        </div>
-      </form>
+    <div className="login-page">
+      <div className="login-container">
+        <img src="/images/logo1.png" alt="Logo" className="login-logo" />
+        <br>
+        </br>
+        {error && <p className="error">{error}</p>}
+        <form onSubmit={handleSubmit}>
+          <div className="p-inputgroup flex-1 form-group">
+            <span className="p-inputgroup-addon">
+              <i className="pi pi-envelope"></i>
+            </span>
+            <InputText
+              type="email"
+              id="email"
+              name="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Correo Electrónico"
+              required
+            />
+          </div>
+          <div className="p-inputgroup flex-1 form-group">
+            <span className="p-inputgroup-addon">
+              <i className="pi pi-lock"></i>
+            </span>
+            <InputText
+              type={showPassword ? "text" : "password"}
+              id="password"
+              name="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="Contraseña"
+              required
+            />
+            <span className="p-inputgroup-addon">
+              <button type="button" onClick={() => setShowPassword(!showPassword)}>
+                <i className={showPassword ? "pi pi-eye-slash" : "pi pi-eye"}></i>
+              </button>
+            </span>
+          </div>
+          <div className="form-group remember-me">
+            <input
+              type="checkbox"
+              id="rememberMe"
+              checked={rememberMe}
+              onChange={(e) => setRememberMe(e.target.checked)}
+            />
+            <label htmlFor="rememberMe">Recordar contraseña</label>
+          </div>
+          <div className="button-group">
+            <button type="submit" className="login-button">Iniciar Sesión</button>
+            <button type="button" onClick={handleCancel} className="cancel-button">Cancelar</button>
+          </div>
+          <div className="login-links">
+            <Link to="/forgot-password">Olvidé mi contraseña</Link>
+            <Link to="/register">Registrarse</Link>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };
