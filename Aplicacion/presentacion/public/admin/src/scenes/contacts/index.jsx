@@ -30,9 +30,8 @@ const Contacts = () => {
       flex: 1,
     },
     {
-      field: "usuarioid",
-      headerName: "Id Usuario",
-      type: "number",
+      field: "nombre",
+      headerName: "Dueño",
       headerAlign: "left",
       align: "left",
     },
