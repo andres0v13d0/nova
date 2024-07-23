@@ -152,13 +152,6 @@ const Invoices = () => {
   return (
     <Box m="20px">
       <Header title="Gestión de Inventario" subtitle="Lista de Productos en el Inventario" />
-
-      <Box mt={2} mb={1}>
-        <Button variant="contained" color="primary" onClick={() => setIsModalOpen(true)}>
-          Agregar Producto
-        </Button>
-      </Box>
-
       <Box height="75vh" width="100%">
         <DataGrid rows={productos} columns={columns} getRowId={(row) => row.productoid} />
       </Box>
