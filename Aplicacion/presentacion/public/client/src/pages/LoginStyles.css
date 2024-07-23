@@ -7,12 +7,6 @@
   background-color: #f4f4f4;
 }
 
-.login-logo {
-  width: 100px; /* Ajusta el tamaño según tus necesidades */
-  height: auto;
-  margin-bottom: 20px;
-}
-
 .login-container h2 {
   margin-bottom: 20px;
 }
@@ -76,4 +70,22 @@
 
 .error {
   color: red;
+}
+
+.remember-me {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  width: 100%;
+  font-size: 12px;
+}
+
+.remember-me label {
+  margin-left: 5px;
+}
+
+.p-inputgroup-addon button {
+  background: none;
+  border: none;
+  cursor: pointer;
 }

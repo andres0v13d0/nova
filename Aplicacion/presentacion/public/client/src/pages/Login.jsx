@@ -2,6 +2,10 @@ import React, { useContext, useEffect, useState } from 'react';
 import { MyContext } from '../App'; // Asegúrate de ajustar la ruta de importación según tu estructura de archivos
 import './LoginStyles.css';
 import { useHistory, Link } from 'react-router-dom';
+import { InputText } from 'primereact/inputtext';
+import 'primereact/resources/themes/saga-blue/theme.css'; // Estilo de tema
+import 'primereact/resources/primereact.min.css'; // Estilo de componentes
+import 'primeicons/primeicons.css'; // Iconos
 
 const Login = () => {
   const { setisHeaderFooterShow } = useContext(MyContext);
@@ -17,6 +21,8 @@ const Login = () => {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState('');
   const history = useHistory();
 
@@ -50,31 +56,53 @@ const Login = () => {
 
   return (
     <div className="login-container">
-      <img src="/images/logo1.png" alt="Logo" className="login-logo" / > {/* Agrega la imagen aquí */}
+      <img src="/images/logo1.png" alt="Logo" className="login-logo" />
       <h2>Inicio de Sesión</h2>
       {error && <p className="error">{error}</p>}
       <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label htmlFor="email">Correo Electrónico:</label>
-          <input
+        <div className="p-inputgroup flex-1 form-group">
+          <span className="p-inputgroup-addon">
+            <i className="pi pi-envelope"></i>
+          </span>
+          <InputText
             type="email"
             id="email"
             name="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+            placeholder="Correo Electrónico"
             required
           />
         </div>
-        <div className="form-group">
-          <label htmlFor="password">Contraseña:</label>
-          <input
-            type="password"
+        <div className="p-inputgroup flex-1 form-group">
+          <span className="p-inputgroup-addon">
+            <i className="pi pi-lock"></i>
+          </span>
+          <InputText
+            type={showPassword ? "text" : "password"}
             id="password"
             name="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            placeholder="Contraseña"
             required
           />
+          <span className="p-inputgroup-addon">
+            <button type="button" onClick={() => setShowPassword(!showPassword)}>
+              <i className={showPassword ? "pi pi-eye-slash" : "pi pi-eye"}></i>
+            </button>
+          </span>
+        </div>
+        <div className="form-group">
+          <div className="remember-me">
+            <input
+              type="checkbox"
+              id="rememberMe"
+              checked={rememberMe}
+              onChange={(e) => setRememberMe(e.target.checked)}
+            />
+            <label htmlFor="rememberMe">Recordar contraseña</label>
+          </div>
         </div>
         <div className="button-group">
           <button type="submit" className="login-button">Iniciar Sesión</button>
