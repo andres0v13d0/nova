@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { Box, useTheme, Button } from "@mui/material";
+import { Box, useTheme, IconButton } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
 import { tokens } from "../../theme";
 import Header from "../../components/Header";
+import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 
 const Reportes = () => {
   const theme = useTheme();
@@ -35,13 +36,12 @@ const Reportes = () => {
       width: 150,
       disableClickEventBubbling: true,
       renderCell: (params) => (
-        <Button
-          variant="contained"
+        <IconButton
           color="primary"
           onClick={() => handleGenerarReporte(params.row.id)}
         >
-          Generar Reporte
-        </Button>
+          <PictureAsPdfIcon />
+        </IconButton>
       ),
     },
   ];
@@ -88,4 +88,3 @@ const Reportes = () => {
 };
 
 export default Reportes;
-
