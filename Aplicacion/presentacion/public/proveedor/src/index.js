@@ -12,3 +12,10 @@ root.render(
     </BrowserRouter>
   </React.StrictMode>
 );
+
+ReactDOM.render(
+  <ColorModeProvider>
+    <App />
+  </ColorModeProvider>,
+  document.getElementById("root")
+);
