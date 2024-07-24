@@ -1,8 +1,9 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState, useRef } from 'react';
 import { MyContext } from '../App'; // Asegúrate de ajustar la ruta de importación según tu estructura de archivos
 import './LoginStyles.css';
 import { useHistory, Link } from 'react-router-dom';
 import { InputText } from 'primereact/inputtext';
+import { Messages } from 'primereact/messages';
 import 'primereact/resources/themes/saga-blue/theme.css'; // Estilo de tema
 import 'primereact/resources/primereact.min.css'; // Estilo de componentes
 import 'primeicons/primeicons.css'; // Iconos
@@ -24,6 +25,7 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState('');
+  const msgs = useRef(null);
   const history = useHistory();
 
   const handleSubmit = async (e) => {
@@ -44,9 +46,12 @@ const Login = () => {
       const data = await response.json();
       localStorage.setItem('token', data.token);
 
-      history.push('/');
+      msgs.current.show({ severity: 'success', summary: 'Success', detail: 'Inicio de sesión exitoso' });
+      setTimeout(() => {
+        history.push('/');
+      }, 2000); // Redirigir después de 2 segundos
     } catch (error) {
-      setError('Correo electrónico o contraseña incorrectos');
+      msgs.current.show({ severity: 'error', summary: 'Error', detail: 'Correo electrónico o contraseña incorrectos' });
     }
   };
 
@@ -58,8 +63,8 @@ const Login = () => {
     <div className="login-page">
       <div className="login-container">
         <img src="/images/logo1.png" alt="Logo" className="login-logo" />
-        <br>
-        </br>
+        <br />
+        <Messages ref={msgs} className="login-messages" /> {/* Mensajes de éxito o error */}
         {error && <p className="error">{error}</p>}
         <form onSubmit={handleSubmit}>
           <div className="p-inputgroup flex-1 form-group">

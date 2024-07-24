@@ -104,3 +104,10 @@
   border: none;
   cursor: pointer;
 }
+
+.login-messages {
+  position: fixed;
+  bottom: 20px; /* Ajusta la distancia desde el borde inferior */
+  right: 20px;  /* Ajusta la distancia desde el borde derecho */
+  z-index: 1000; /* Asegura que los mensajes estén sobre otros elementos */
+}
