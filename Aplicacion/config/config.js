@@ -4,6 +4,13 @@ module.exports = {
         password: "salchipapa123",
         database: "novabd",
         host: "localhost",
-        dialect: "postgres"
+        dialect:"postgres"
+    },
+    production: {
+        username: "root",
+        password: "salchipapa123",
+        database: "novabd",
+        host: "localhost",
+        dialect:"mysql"
     }
 };
