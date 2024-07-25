@@ -23,12 +23,12 @@ const ShopCart = ({ shopItems, addToCart }) => {
           <div className='box' key={index}>
             <div className='product mtop'>
               <div className='img'>
-                <img src={shopItem.cover} alt='' />
+                <img src={shopItem.cover} alt={shopItem.name} />
               </div>
               <div className='product-details'>
                 <h3>{shopItem.name}</h3>
                 <div className='price'>
-                  <h4>${shopItem.price} </h4>
+                  <h4>${shopItem.price}</h4>
                   <button onClick={() => addToCart(shopItem)}>
                     <i className='fa fa-plus'></i>
                   </button>
@@ -45,9 +45,13 @@ const ShopCart = ({ shopItems, addToCart }) => {
         {selectedItem && (
           <>
             <h2>{selectedItem.name}</h2>
-            <p>
-              Descripcion del producto
-            </p>
+            <p><strong>Precio:</strong> ${selectedItem.price}</p>
+            <p><strong>Descripción:</strong> {selectedItem.description}</p>
+            <p><strong>Categoría:</strong> {selectedItem.category}</p>
+            <p><strong>Descuento:</strong> {selectedItem.discount}%</p>
+            <p><strong>Disponible:</strong> {selectedItem.stock > 0 ? 'Sí' : 'No'}</p>
+            <p><strong>ID del Producto:</strong> {selectedItem.id}</p>
+            {/* Agrega aquí más atributos del producto según sea necesario */}
           </>
         )}
       </Sidebar>
