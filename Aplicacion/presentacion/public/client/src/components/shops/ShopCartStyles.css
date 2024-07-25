@@ -1,0 +1,103 @@
+.card {
+    padding: 2rem;
+  }
+  
+  .flex {
+    display: flex;
+  }
+  
+  .flex-column {
+    flex-direction: column;
+  }
+  
+  .flex-row {
+    flex-direction: row;
+  }
+  
+  .xl\\:flex-row {
+    flex-direction: row;
+  }
+  
+  .xl\\:align-items-start {
+    align-items: flex-start;
+  }
+  
+  .p-4 {
+    padding: 1rem;
+  }
+  
+  .gap-4 {
+    gap: 1rem;
+  }
+  
+  .w-9 {
+    width: 90%;
+  }
+  
+  .sm\\:w-16rem {
+    width: 16rem;
+  }
+  
+  .xl\\:w-10rem {
+    width: 10rem;
+  }
+  
+  .shadow-2 {
+    box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.2);
+  }
+  
+  .block {
+    display: block;
+  }
+  
+  .mx-auto {
+    margin-left: auto;
+    margin-right: auto;
+  }
+  
+  .border-round {
+    border-radius: 0.5rem;
+  }
+  
+  .text-2xl {
+    font-size: 1.5rem;
+  }
+  
+  .font-bold {
+    font-weight: bold;
+  }
+  
+  .text-900 {
+    color: #212121;
+  }
+  
+  .text-700 {
+    color: #757575;
+  }
+  
+  .align-items-center {
+    align-items: center;
+  }
+  
+  .gap-2 {
+    gap: 0.5rem;
+  }
+  
+  .text-2xl {
+    font-size: 1.5rem;
+  }
+  
+  .font-semibold {
+    font-weight: 600;
+  }
+  
+  .p-button-info {
+    background-color: #17a2b8;
+    border-color: #17a2b8;
+  }
+  
+  .p-button-info:hover {
+    background-color: #138496;
+    border-color: #138496;
+  }
+      

@@ -1,6 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Sidebar } from 'primereact/sidebar';
 import { Button } from 'primereact/button';
+import { DataScroller } from 'primereact/datascroller';
+import { Rating } from 'primereact/rating';
+import { Tag } from 'primereact/tag';
+import './ShopCartStyles.css';
 
 const ShopCart = ({ shopItems, addToCart }) => {
   const [count, setCount] = useState(0);
@@ -16,31 +20,58 @@ const ShopCart = ({ shopItems, addToCart }) => {
     setVisible(true);
   };
 
-  return (
-    <>
-      {shopItems.length > 0 ? (
-        shopItems.map((shopItem, index) => (
-          <div className='box' key={index}>
-            <div className='product mtop'>
-              <div className='img'>
-                <img src={shopItem.cover} alt={shopItem.name} />
+  const getSeverity = (product) => {
+    switch (product.inventoryStatus) {
+      case 'INSTOCK':
+        return 'success';
+
+      case 'LOWSTOCK':
+        return 'warning';
+
+      case 'OUTOFSTOCK':
+        return 'danger';
+
+      default:
+        return null;
+    }
+  };
+
+  const itemTemplate = (data) => {
+    return (
+      <div className="col-12">
+        <div className="flex flex-column xl:flex-row xl:align-items-start p-4 gap-4">
+          <img className="w-9 sm:w-16rem xl:w-10rem shadow-2 block xl:block mx-auto border-round" src={data.cover} alt={data.name} />
+          <div className="flex flex-column lg:flex-row justify-content-between align-items-center xl:align-items-start lg:flex-1 gap-4">
+            <div className="flex flex-column align-items-center lg:align-items-start gap-3">
+              <div className="flex flex-column gap-1">
+                <div className="text-2xl font-bold text-900">{data.name}</div>
+                <div className="text-700">{data.description}</div>
               </div>
-              <div className='product-details'>
-                <h3>{shopItem.name}</h3>
-                <div className='price'>
-                  <h4>${shopItem.price}</h4>
-                  <button onClick={() => addToCart(shopItem)}>
-                    <i className='fa fa-plus'></i>
-                  </button>
-                  <Button icon="pi pi-info" onClick={() => showDetails(shopItem)} className="p-button-info" />
-                </div>
+              <div className="flex flex-column gap-2">
+                <Rating value={data.rating} readOnly cancel={false}></Rating>
+                <span className="flex align-items-center gap-2">
+                  <i className="pi pi-tag product-category-icon"></i>
+                  <span className="font-semibold">{data.category}</span>
+                </span>
               </div>
             </div>
+            <div className="flex flex-row lg:flex-column align-items-center lg:align-items-end gap-4 lg:gap-2">
+              <span className="text-2xl font-semibold">${data.price}</span>
+              <Button icon="pi pi-shopping-cart" label="Add to Cart" onClick={() => addToCart(data)} disabled={data.inventoryStatus === 'OUTOFSTOCK'}></Button>
+              <Button icon="pi pi-info" label="Detalles" onClick={() => showDetails(data)} className="p-button-info" />
+              <Tag value={data.inventoryStatus} severity={getSeverity(data)}></Tag>
+            </div>
           </div>
-        ))
-      ) : (
-        <p>No hay productos disponibles</p>
-      )}
+        </div>
+      </div>
+    );
+  };
+
+  return (
+    <>
+      <div className="card">
+        <DataScroller value={shopItems} itemTemplate={itemTemplate} rows={5} buffer={0.4} header="Lista de Productos" />
+      </div>
       <Sidebar visible={visible} onHide={() => setVisible(false)}>
         {selectedItem && (
           <>
