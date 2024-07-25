@@ -29,9 +29,6 @@ const ShopCart = ({ shopItems, addToCart }) => {
                 <h3>{shopItem.name}</h3>
                 <div className='price'>
                   <h4>${shopItem.price} </h4>
-          
-                  <h4>${shopItem.category} </h4>
-                  
                   <button onClick={() => addToCart(shopItem)}>
                     <i className='fa fa-plus'></i>
                   </button>
