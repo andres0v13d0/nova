@@ -3,6 +3,8 @@ import { Box, Button, Typography, TextField, Modal, useTheme } from "@mui/materi
 import { DataGrid } from "@mui/x-data-grid";
 import { tokens } from "../../theme";
 import Header from "../../components/Header";
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 const Invoices = () => {
   const [productos, setProductos] = useState([]);
@@ -43,18 +45,20 @@ const Invoices = () => {
       headerName: "Acciones",
       flex: 1,
       renderCell: (params) => (
-        <Box>
+        <Box display="flex" gap="10px">
           <Button
-            variant="contained"
+            variant="outlined"
             color="primary"
             onClick={() => handleEditProduct(params.row)}
+            startIcon={<EditIcon />}
           >
             Editar
           </Button>
           <Button
-            variant="contained"
+            variant="outlined"
             color="error"
             onClick={() => handleDeleteProduct(params.row.productoid)}
+            startIcon={<DeleteIcon />}
           >
             Eliminar
           </Button>
