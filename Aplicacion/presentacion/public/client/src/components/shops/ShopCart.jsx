@@ -56,8 +56,8 @@ const ShopCart = ({ shopItems, addToCart }) => {
             </div>
             <div className="flex flex-row lg:flex-column align-items-center lg:align-items-end gap-4 lg:gap-2">
               <span className="text-2xl font-semibold">${data.price}</span>
-              <Button icon="pi pi-shopping-cart" label="Add to Cart" onClick={() => handleAddToCart(data)} disabled={data.inventoryStatus === 'OUTOFSTOCK'}></Button>
-              <Button icon="pi pi-info" label="Detalles" onClick={() => showDetails(data)} className="p-button-info" />
+              <Button icon="pi pi-shopping-cart" onClick={() => handleAddToCart(data)} disabled={data.inventoryStatus === 'OUTOFSTOCK'}></Button>
+              <Button icon="pi pi-info" onClick={() => showDetails(data)} className="p-button-info" />
               <Tag value={data.inventoryStatus} severity={getSeverity(data)}></Tag>
             </div>
           </div>
@@ -76,6 +76,7 @@ const ShopCart = ({ shopItems, addToCart }) => {
         {selectedItem && (
           <>
             <h2>{selectedItem.name}</h2>
+            <img src={selectedItem.cover} alt={selectedItem.name} style={{ width: '100%', maxWidth: '300px', marginBottom: '20px' }} />
             <p><strong>Precio:</strong> ${selectedItem.price}</p>
             <p><strong>Descripción:</strong> {selectedItem.description}</p>
             <p><strong>Categoría:</strong> {selectedItem.category}</p>
