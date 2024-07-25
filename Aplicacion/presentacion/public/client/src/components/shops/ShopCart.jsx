@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Sidebar } from 'primereact/sidebar';
 import { Button } from 'primereact/button';
 import { DataScroller } from 'primereact/datascroller';
@@ -8,14 +8,9 @@ import { Messages } from 'primereact/messages';
 import './ShopCartStyles.css';
 
 const ShopCart = ({ shopItems, addToCart }) => {
-  const [count, setCount] = useState(0);
   const [visible, setVisible] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   const msgs = useRef(null);
-
-  const increment = () => {
-    setCount(count + 1);
-  };
 
   const showDetails = (item) => {
     setSelectedItem(item);
@@ -31,13 +26,10 @@ const ShopCart = ({ shopItems, addToCart }) => {
     switch (product.inventoryStatus) {
       case 'INSTOCK':
         return 'success';
-
       case 'LOWSTOCK':
         return 'warning';
-
       case 'OUTOFSTOCK':
         return 'danger';
-
       default:
         return null;
     }
@@ -78,7 +70,7 @@ const ShopCart = ({ shopItems, addToCart }) => {
     <>
       <Messages ref={msgs} />
       <div className="card">
-        <DataScroller value={shopItems} itemTemplate={itemTemplate} rows={5} buffer={0.4} header="Lista de Productos" />
+        <DataScroller value={shopItems} itemTemplate={itemTemplate} rows={5} buffer={0.4} inline scrollHeight="500px" header="Scroll Down to Load More" />
       </div>
       <Sidebar visible={visible} onHide={() => setVisible(false)}>
         {selectedItem && (
