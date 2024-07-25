@@ -26,24 +26,7 @@ const Navbar = () => {
             <li>
               <Link to="/">Tienda</Link>
             </li>
-            <li>
-              <Link to="/Componentes">Componentes de PC</Link>
-            </li>
-            <li>
-              <Link to="/Perifericos">Perifericos</Link>
-            </li>
-            <li>
-              <Link to="/Monitores">Monitores</Link>
-            </li>
-            <li>
-              <Link to="/PCs">PCs</Link>
-            </li>
-            <li>
-              <Link to="/Laptops">Laptops</Link>
-            </li>
-            <li>
-              <Link to="/Consolas">Consolas</Link>
-            </li>
+            
             <li>
               <Link to="/Conocenos">Conocenos</Link>
             </li>

@@ -13,7 +13,9 @@ const obtenerProductos = async () => {
       id: producto.productoid,
       cover: producto.imagen ? `data:image/png;base64,${producto.imagen}` : 'default-image-path', // Ajusta la ruta de la imagen por defecto si `imagen` es null
       name: producto.nombre,
-      price: producto.precio, // Ajusta este campo según sea necesario
+      price: producto.precio,
+      description: producto.descripcion,
+      stock: producto.cantidadstock // Ajusta este campo según sea necesario
     }));
     
 

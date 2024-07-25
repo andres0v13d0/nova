@@ -42,17 +42,13 @@ const ShopCart = ({ shopItems, addToCart }) => {
           <img src={data.cover} alt={data.name} />
         </div>
         <div className="product-info">
-          <h3>{data.name}</h3>
-          <p>{data.description}</p>
-          <Rating value={data.rating} readOnly cancel={false} stars={5} />
-          <span className="product-category">
-            <i className="pi pi-tag product-category-icon"></i>
-            <span className="font-semibold">{data.category}</span>
-          </span>
-          <span className="product-price">${data.price}</span>
+          <div className="detalles-producto">
+            <h3>{data.name}</h3>
+            <span className="product-price">${data.price}</span>
+          </div>
           <div className="product-actions">
-            <Button icon="pi pi-shopping-cart" label="Add to Cart" onClick={() => handleAddToCart(data)} disabled={data.inventoryStatus === 'OUTOFSTOCK'}></Button>
-            <Button icon="pi pi-info" label="Detalles" onClick={() => showDetails(data)} className="p-button-info" />
+            <Button icon="pi pi-shopping-cart" label="Agregar" onClick={() => handleAddToCart(data)} disabled={data.inventoryStatus === 'OUTOFSTOCK'}></Button>
+            <Button icon="pi pi-search" label="Detalles" onClick={() => showDetails(data)} className="p-button-info" />
           </div>
           <Tag value={data.inventoryStatus} severity={getSeverity(data)}></Tag>
         </div>
@@ -64,7 +60,6 @@ const ShopCart = ({ shopItems, addToCart }) => {
     <>
       <Messages ref={msgs} />
       <div className="card">
-        <h2 className="header">List of Products</h2>
         <DataScroller value={shopItems} itemTemplate={itemTemplate} rows={5} buffer={0.4} inline scrollHeight="500px" />
       </div>
       <Sidebar visible={visible} onHide={() => setVisible(false)}>
@@ -75,9 +70,8 @@ const ShopCart = ({ shopItems, addToCart }) => {
             <p><strong>Precio:</strong> ${selectedItem.price}</p>
             <p><strong>Descripción:</strong> {selectedItem.description}</p>
             <p><strong>Categoría:</strong> {selectedItem.category}</p>
-            <p><strong>Descuento:</strong> {selectedItem.discount}%</p>
+            <p><strong>Descuento:</strong> 0%</p>
             <p><strong>Disponible:</strong> {selectedItem.stock > 0 ? 'Sí' : 'No'}</p>
-            <p><strong>ID del Producto:</strong> {selectedItem.id}</p>
             {/* Agrega aquí más atributos del producto según sea necesario */}
           </>
         )}
