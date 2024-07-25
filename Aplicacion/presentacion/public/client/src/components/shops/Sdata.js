@@ -14,7 +14,9 @@ const obtenerProductos = async () => {
       cover: producto.imagen ? `data:image/png;base64,${producto.imagen}` : 'default-image-path', // Ajusta la ruta de la imagen por defecto si `imagen` es null
       name: producto.nombre,
       price: producto.precio, // Ajusta este campo según sea necesario
+      category: producto.categoria,
     }));
+    
 
     return shopItems;
   } catch (error) {
