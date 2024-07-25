@@ -11,8 +11,9 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
-import Checkout from "./pages/Checkout";
+import Checkout from "./pages/Checkout"; // Importa la nueva página de pago
 
+// Define y exporta MyContext
 export const MyContext = createContext();
 
 function App() {
@@ -22,7 +23,6 @@ function App() {
   const [isHeaderFooterShow, setisHeaderFooterShow] = useState(true);
   const [alertBox, setAlertBox] = useState({ open: false, error: false, msg: '' });
   const [isLogin, setIsLogin] = useState(false);
-  const [user, setUser] = useState(null); // Estado para la información del usuario
 
   useEffect(() => {
     const fetchData = async () => {
@@ -61,9 +61,7 @@ function App() {
       alertBox,
       setAlertBox,
       isLogin,
-      setIsLogin,
-      user,
-      setUser
+      setIsLogin
     }}>
       <Router>
         {isHeaderFooterShow && <Header CartItem={CartItem} setProductos={setShopItems} />}
