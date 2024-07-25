@@ -220,20 +220,7 @@ const Register = () => {
               required
             />
           </div>
-          <div className="p-inputgroup flex-1 form-group">
-            <span className="p-inputgroup-addon">
-              <i className="pi pi-id-card"></i>
-            </span>
-            <InputText
-              id="cedula"
-              name="cedula"
-              keyfilter="int"
-              value={cedula}
-              onChange={(e) => setCedula(e.target.value)}
-              placeholder="Número de Cédula"
-              required
-            />
-          </div>
+          
           <div className="button-group">
             <button type="submit" className="login-button">REGISTRARSE</button>
           </div>
