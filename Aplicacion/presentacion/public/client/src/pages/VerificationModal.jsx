@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { InputOtp } from 'primereact/inputotp';
+import { Button } from 'primereact/button';
 import './ModalStyles.css';
 
 const VerificationModal = ({ email, onClose, operation = 'registration', pedidoId = null }) => {
@@ -7,6 +9,15 @@ const VerificationModal = ({ email, onClose, operation = 'registration', pedidoI
   const [confirmNewPassword, setConfirmNewPassword] = useState('');
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
+
+  const customInput = ({events, props}) => {
+    return (
+      <>
+        <input {...events} {...props} type="text" className="custom-otp-input-sample" />
+        {props.id === 2 && <div className="px-3"><i className="pi pi-minus" /></div>}
+      </>
+    );
+  };
 
   const handleVerify = async (e) => {
     e.preventDefault();
@@ -83,14 +94,9 @@ const VerificationModal = ({ email, onClose, operation = 'registration', pedidoI
           <form onSubmit={handleVerify}>
             <div className="form-group">
               <label htmlFor="codigo">Código de Verificación:</label>
-              <input
-                type="text"
-                id="codigo"
-                name="codigo"
-                value={codigo}
-                onChange={(e) => setCodigo(e.target.value)}
-                required
-              />
+              <div className="custom-otp-container">
+                <InputOtp value={codigo} onChange={(e) => setCodigo(e.value)} length={6} inputTemplate={customInput} style={{gap: 0}}/>
+              </div>
             </div>
             {operation === 'resetPassword' && (
               <>
@@ -119,10 +125,8 @@ const VerificationModal = ({ email, onClose, operation = 'registration', pedidoI
               </>
             )}
             <div className="button-group">
-              <button type="submit" className="login-button">
-                {operation === 'registration' ? 'Verificar' : 'Actualizar Contraseña'}
-              </button>
-              <button type="button" onClick={onClose} className="cancel-button">Cancelar</button>
+              <Button label={operation === 'registration' ? 'Verificar' : 'Actualizar Contraseña'} />
+              <Button label="Cancelar" onClick={onClose} className="cancel-button" />
             </div>
           </form>
         )}

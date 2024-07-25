@@ -49,8 +49,19 @@ router.post('/finalizar', async (req, res) => {
 router.post('/recibido', async (req, res) => {
     try {
         const adminId = authService.obtenerUsuarioId(req);
-        const result = await comprasService.marcarPedidoRecibido(adminId);
+        const { nombreEmpresa } = req.body;
+        const result = await comprasService.marcarPedidoRecibido(adminId, nombreEmpresa);
         res.json(result);
+    } catch (error) {
+        res.status(500).json({ error: error.message });
+    }
+});
+
+router.get('/pedidos', async (req, res) => {
+    try {
+        const adminId = authService.obtenerUsuarioId(req);
+        const pedidos = await comprasService.obtenerPedidos(adminId);
+        res.json(pedidos);
     } catch (error) {
         res.status(500).json({ error: error.message });
     }

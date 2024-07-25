@@ -5,7 +5,7 @@ const { CLIENT_ID, CLIENT_SECRET, REDIRECT_URI, REFRESH_TOKEN } = require('./tok
 const oAuth2Client = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI);
 oAuth2Client.setCredentials({ refresh_token: REFRESH_TOKEN });
 
-async function enviarCorreo(destinatario, asunto, texto) {
+async function enviarCorreo(destinatario, asunto, texto, adjunto = null) {
   try {
     const accessToken = await oAuth2Client.getAccessToken();
 
@@ -27,6 +27,16 @@ async function enviarCorreo(destinatario, asunto, texto) {
       subject: asunto,
       text: texto,
     };
+
+    if (adjunto) {
+      mailOptions.attachments = [
+        {
+          filename: adjunto.filename,
+          content: adjunto.content,
+          encoding: 'base64'
+        }
+      ];
+    }
 
     const result = await transporter.sendMail(mailOptions);
     return result;

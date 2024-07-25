@@ -18,6 +18,7 @@ import {
   CardContent,
   CardActions,
 } from "@mui/material";
+import QRModal from "./QrModal"; // Asegúrate de que la ruta sea correcta
 
 const AdminCompras = () => {
   const [productos, setProductos] = useState([]);
@@ -28,6 +29,7 @@ const AdminCompras = () => {
   const [empresaId, setEmpresaId] = useState("");
   const [buscar, setBuscar] = useState("");
   const [error, setError] = useState("");
+  const [qrModalOpen, setQrModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -88,6 +90,10 @@ const AdminCompras = () => {
       producto.cantidad = 1;
       setCarrito([...carrito, producto]);
     }
+  };
+
+  const removerDelCarrito = (producto) => {
+    setCarrito(carrito.filter((p) => p !== producto));
   };
 
   const mostrarProductos = () => {
@@ -170,8 +176,47 @@ const AdminCompras = () => {
     </Box>
   );
 
-  const removerDelCarrito = (producto) => {
-    setCarrito(carrito.filter((p) => p !== producto));
+  const handlePedidoRecibido = () => {
+    setQrModalOpen(true);
+  };
+
+  const handleModalClose = () => {
+    setQrModalOpen(false);
+  };
+
+  const handleScanSuccess = async (nombreEmpresa) => {
+    console.log(`Producto recibido de: ${nombreEmpresa}`);
+
+    try {
+      const response = await fetch('http://localhost:3200/compras/marcar-recibido', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`
+        },
+        body: JSON.stringify({ nombreEmpresa })
+      });
+
+      if (!response.ok) {
+        throw new Error('Error al marcar el producto como recibido');
+      }
+
+      const result = await response.json();
+      console.log('Producto marcado como recibido:', result);
+
+      // Aquí puedes actualizar el estado para reflejar los cambios en la UI
+      const nuevosProductos = productos.map((producto) => {
+        if (producto.proveedor.empresa.nombreempresa === nombreEmpresa) {
+          return { ...producto, recibido: true };
+        }
+        return producto;
+      });
+
+      setProductos(nuevosProductos);
+
+    } catch (error) {
+      setError(error.message);
+    }
   };
 
   return (
@@ -186,7 +231,7 @@ const AdminCompras = () => {
         elevation={3}
       >
         <Typography variant="h4" gutterBottom>
-          Compras del Administrador
+          Administración de Compras
         </Typography>
         <Box
           display="flex"
@@ -253,12 +298,16 @@ const AdminCompras = () => {
           <Button
             variant="contained"
             color="secondary"
-            onClick={() => alert("Pedido Recibido")}
+            onClick={handlePedidoRecibido}
           >
-            Pedido Recibido
+            Recibir Pedido
           </Button>
         </Box>
-        {error && <Typography color="error">{error}</Typography>}
+        <QRModal
+          open={qrModalOpen}
+          onClose={handleModalClose}
+          onScanSuccess={handleScanSuccess}
+        />
       </Box>
     </Container>
   );

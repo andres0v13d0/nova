@@ -1,5 +1,6 @@
 const db = require('../../accesodatos');
 const enviarCorreo = require('./emailService');
+const QRCode = require('qrcode');
 
 const obtenerProductos = async () => {
     try {
@@ -43,6 +44,8 @@ const finalizarCompra = async (carrito, adminId) => {
             throw new Error('El carrito está vacío');
         }
 
+        let proveedores = {};
+
         for (const item of carrito) {
             await db.productos_temporales.create({
                 nombreproducto: item.nombreproducto,
@@ -51,20 +54,29 @@ const finalizarCompra = async (carrito, adminId) => {
                 cantidad: item.cantidad,
                 categoriaid: item.categoriaid,
                 imagen: item.imagenproducto,
-                usuarioid: adminId
+                usuarioid: adminId,
+                nombreempresa: item.proveedor.empresa.nombreempresa
             });
+
+            if (!proveedores[item.proveedor.empresa.nombreempresa]) {
+                proveedores[item.proveedor.empresa.nombreempresa] = {
+                    productos: [],
+                    correoProveedor: item.proveedor.correoelectronico
+                };
+            }
+
+            proveedores[item.proveedor.empresa.nombreempresa].productos.push(item.nombreproducto);
         }
 
-        const pedidos = carrito.map(item => ({
-            producto: item.nombreproducto,
-            cantidad: item.cantidad,
-            precio: item.precioproducto,
-            proveedor: item.proveedor.nombre,
-            correoProveedor: item.proveedor.correoelectronico
-        }));
+        for (const [nombreEmpresa, { productos, correoProveedor }] of Object.entries(proveedores)) {
+            const qrData = `Empresa: ${nombreEmpresa}`;
+            const qrCode = await QRCode.toDataURL(qrData);
+            const adjunto = {
+                filename: 'qr.png',
+                content: qrCode.split(',')[1]
+            };
 
-        for (const pedido of pedidos) {
-            await enviarCorreo(pedido.correoProveedor, 'Nuevo Pedido', `El administrador ha realizado un pedido de ${pedido.cantidad} unidades del producto ${pedido.producto}.`);
+            await enviarCorreo(correoProveedor, 'Nuevo Pedido', `El administrador ha realizado un pedido a su empresa.`, adjunto);
         }
 
         return { message: 'Compra finalizada y correos enviados' };
@@ -79,9 +91,9 @@ const limpiarPrecio = (precio) => {
     return isNaN(precioNumerico) ? 0 : precioNumerico;
 };
 
-const marcarPedidoRecibido = async (adminId) => {
+const marcarPedidoRecibido = async (adminId, nombreEmpresa) => {
     try {
-        const productosTemporales = await db.productos_temporales.findAll({ where: { usuarioid: adminId } });
+        const productosTemporales = await db.productos_temporales.findAll({ where: { usuarioid: adminId, nombreempresa: nombreEmpresa } });
 
         for (const item of productosTemporales) {
             const precioLimpio = limpiarPrecio(item.precioproducto);
@@ -118,11 +130,19 @@ const marcarPedidoRecibido = async (adminId) => {
     }
 };
 
+const obtenerPedidos = async (adminId) => {
+    try {
+        return await db.productos_temporales.findAll({ where: { usuarioid: adminId } });
+    } catch (error) {
+        throw new Error(`Error obteniendo pedidos: ${error.message}`);
+    }
+};
 
 module.exports = {
     obtenerProductos,
     obtenerCategorias,
     obtenerEmpresas,
     finalizarCompra,
-    marcarPedidoRecibido
+    marcarPedidoRecibido,
+    obtenerPedidos
 };

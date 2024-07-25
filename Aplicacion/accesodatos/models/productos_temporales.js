@@ -47,6 +47,10 @@ module.exports = (sequelize, DataTypes) => {
                 model: 'usuario',
                 key: 'usuarioid'
             }
+        },
+        nombreempresa: {
+            type: DataTypes.STRING(255),
+            allowNull: true
         }
     }, {
         tableName: 'productos_temporales',

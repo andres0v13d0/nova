@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Marcar Pedido como Recibido</title>
+    <style>
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px;
+        }
+        .error {
+            color: red;
+        }
+    </style>
+    <!-- Usar la versión correcta de html5-qrcode -->
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Marcar Pedido como Recibido</h1>
+        <select id="camera-select"></select>
+        <div id="qr-reader" style="width:500px"></div>
+        <div id="qr-reader-results"></div>
+        <div id="error-container" class="error"></div>
+    </div>
+
+    <script>
+        let html5QrCode;
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            await populateCameraOptions();
+            document.getElementById('camera-select').addEventListener('change', setupQrCodeScanner);
+        });
+
+        async function populateCameraOptions() {
+            try {
+                const devices = await Html5Qrcode.getCameras();
+                const cameraSelect = document.getElementById('camera-select');
+                devices.forEach(device => {
+                    const option = document.createElement('option');
+                    option.value = device.id;
+                    option.text = device.label;
+                    cameraSelect.appendChild(option);
+                });
+                setupQrCodeScanner();
+            } catch (error) {
+                document.getElementById('error-container').textContent = 'Error al obtener dispositivos de cámara.';
+                console.error('Error al obtener dispositivos de cámara:', error);
+            }
+        }
+
+        function setupQrCodeScanner() {
+            const cameraId = document.getElementById('camera-select').value;
+
+            if (html5QrCode) {
+                html5QrCode.stop().then(ignore => {
+                    startQrCodeScanner(cameraId);
+                }).catch(err => {
+                    document.getElementById('error-container').textContent = `Error al detener el escáner QR: ${err}`;
+                    console.log(`Error al detener el escáner QR: ${err}`);
+                });
+            } else {
+                startQrCodeScanner(cameraId);
+            }
+        }
+
+        function startQrCodeScanner(cameraId) {
+            html5QrCode = new Html5Qrcode("qr-reader");
+            html5QrCode.start(
+                { deviceId: cameraId },
+                {
+                    fps: 10,
+                    qrbox: 250
+                },
+                qrCodeMessage => {
+                    handleQrCodeScanned(qrCodeMessage);
+                },
+                errorMessage => {
+                    console.log(`QR Code no escaneado. Error: ${errorMessage}`);
+                })
+            .catch(err => {
+                document.getElementById('error-container').textContent = `Error en el escaneo QR: ${err}`;
+                console.log(`Error en el escaneo QR: ${err}`);
+            });
+        }
+
+        function handleQrCodeScanned(qrCodeMessage) {
+            const nombreEmpresa = qrCodeMessage.split(': ')[1];
+            marcarPedidoRecibido(nombreEmpresa);
+        }
+
+        async function marcarPedidoRecibido(nombreEmpresa) {
+            try {
+                const response = await fetch('/compras/recibido', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                    },
+                    body: JSON.stringify({ nombreEmpresa })
+                });
+
+                if (!response.ok) {
+                    throw new Error(await response.text());
+                }
+
+                alert('Pedido marcado como recibido exitosamente');
+                window.location.href = 'admincompras.html';  // Redirigir a la interfaz de compras
+            } catch (error) {
+                document.getElementById('error-container').textContent = error.message;
+            }
+        }
+    </script>
+</body>
+</html>

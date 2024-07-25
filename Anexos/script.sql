@@ -94,18 +94,20 @@ CREATE TABLE empresa(
 	FOREIGN KEY (usuarioid) REFERENCES usuario(usuarioid)
 );
 
-CREATE TABLE productos_temporales(
+CREATE TABLE productos_temporales (
     productotemporalid SERIAL PRIMARY KEY,
     usuarioid INT NOT NULL,
     nombreproducto VARCHAR(100) NOT NULL,
-	descripcionproducto VARCHAR(255) NOT NULL,
-	precioproducto MONEY NOT NULL,
-	categoriaid INT NOT NULL,
-	imagen BYTEA NOT NULL,
-	cantidad INT NOT NULL,
-    FOREIGN KEY (usuarioid) REFERENCES usuario(usuarioid)
+    descripcionproducto VARCHAR(255) NOT NULL,
+    precioproducto MONEY NOT NULL,
+    categoriaid INT NOT NULL,
+    imagen BYTEA NOT NULL,
+    cantidad INT NOT NULL,
+    nombreempresa VARCHAR(255),
+    FOREIGN KEY (usuarioid) REFERENCES usuario(usuarioid),
     FOREIGN KEY (categoriaid) REFERENCES categoria(categoriaid)
 );
+
 
 CREATE TABLE recuperacion(
     id SERIAL PRIMARY KEY,
