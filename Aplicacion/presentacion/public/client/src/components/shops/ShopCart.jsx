@@ -24,10 +24,6 @@ const ShopCart = ({ shopItems, addToCart }) => {
             <div className='product mtop'>
               <div className='img'>
                 <img src={shopItem.cover} alt='' />
-                <div className='product-like'>
-                  <label>{count}</label> <br />
-                  <i className='fa-regular fa-heart' onClick={increment}></i>
-                </div>
               </div>
               <div className='product-details'>
                 <h3>{shopItem.name}</h3>
@@ -36,7 +32,7 @@ const ShopCart = ({ shopItems, addToCart }) => {
                   <button onClick={() => addToCart(shopItem)}>
                     <i className='fa fa-plus'></i>
                   </button>
-                  <Button icon="pi pi-info" label="Detalles" onClick={() => showDetails(shopItem)} className="p-button-info" />
+                  <Button icon="pi pi-info" onClick={() => showDetails(shopItem)} className="p-button-info" />
                 </div>
               </div>
             </div>
@@ -50,8 +46,7 @@ const ShopCart = ({ shopItems, addToCart }) => {
           <>
             <h2>{selectedItem.name}</h2>
             <p>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
-              Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+              Descripcion del producto
             </p>
           </>
         )}

@@ -11,7 +11,14 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
-import Checkout from "./pages/Checkout"; // Importa la nueva página de pago
+import Checkout from "./pages/Checkout";
+import Componentes from "./pages/Componentes";  // Importa tu componente
+import Perifericos from "./pages/Perifericos";  // Importa tu componente
+import Monitores from "./pages/Monitores";  // Importa tu componente
+import PCs from "./pages/PCs";  // Importa tu componente
+import Laptops from "./pages/Laptops";  // Importa tu componente
+import Consolas from "./pages/Consolas";  // Importa tu componente
+import Conocenos from "./pages/Conocenos";  // Importa tu componente
 
 // Define y exporta MyContext
 export const MyContext = createContext();
@@ -80,6 +87,27 @@ function App() {
           </Route>
           <Route path='/checkout' exact>
             <Checkout />
+          </Route>
+          <Route path='/componentes' exact>
+            <Componentes />
+          </Route>
+          <Route path='/perifericos' exact>
+            <Perifericos />
+          </Route>
+          <Route path='/monitores' exact>
+            <Monitores />
+          </Route>
+          <Route path='/pcs' exact>
+            <PCs />
+          </Route>
+          <Route path='/laptops' exact>
+            <Laptops />
+          </Route>
+          <Route path='/consolas' exact>
+            <Consolas />
+          </Route>
+          <Route path='/conocenos' exact>
+            <Conocenos />
           </Route>
           <Route path='/' exact>
             <Pages productItems={productItems} addToCart={addToCart} shopItems={shopItems} />

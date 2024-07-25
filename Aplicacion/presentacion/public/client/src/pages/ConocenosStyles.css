@@ -1,0 +1,79 @@
+.conocenos-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 40px 20px;
+    background-color: #000;
+    color: #fff;
+  }
+  
+  .main-title {
+    font-size: 3em;
+    margin-bottom: 20px;
+  }
+  
+  .subtitle {
+    font-size: 2em;
+    color: #ff0066;
+    margin-bottom: 20px;
+  }
+  
+  .description {
+    font-size: 1.2em;
+    margin-bottom: 30px;
+    max-width: 600px;
+  }
+  
+  .buttons {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 40px;
+  }
+  
+  .button {
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    color: #fff;
+    font-size: 1em;
+    transition: background-color 0.3s ease;
+  }
+  
+  .button.tienda {
+    background-color: #ff0066;
+  }
+  
+  .button.contacto {
+    background-color: #25d366;
+  }
+  
+  .button:hover {
+    opacity: 0.8;
+  }
+  
+  .social-section {
+    margin-top: 40px;
+  }
+  
+  .follow-us {
+    font-size: 1.5em;
+    margin-bottom: 20px;
+  }
+  
+  .social-icons {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    font-size: 2em;
+  }
+  
+  .social-icons a {
+    color: #fff;
+    transition: color 0.3s ease;
+  }
+  
+  .social-icons a:hover {
+    color: #ff0066;
+  }
+  

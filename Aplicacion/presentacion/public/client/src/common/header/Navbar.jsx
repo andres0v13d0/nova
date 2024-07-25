@@ -26,29 +26,26 @@ const Navbar = () => {
             <li>
               <Link to="/">Tienda</Link>
             </li>
-            <li onMouseEnter={() => toggleSubMenu('componentes')} onMouseLeave={() => toggleSubMenu('componentes')}>
-              <Link to="/pages">Componentes de PC</Link>
-            </li>
-            <li onMouseEnter={() => toggleSubMenu('perifericos')} onMouseLeave={() => toggleSubMenu('perifericos')}>
-              <Link to="/user">Perifericos</Link>
-            </li>
-            <li onMouseEnter={() => toggleSubMenu('monitores')} onMouseLeave={() => toggleSubMenu('monitores')}>
-              <Link to="/vendor">Monitores</Link>
+            <li>
+              <Link to="/Componentes">Componentes de PC</Link>
             </li>
             <li>
-              <Link to="/track">PCs</Link>
+              <Link to="/Perifericos">Perifericos</Link>
             </li>
             <li>
-              <Link to="/contact">Laptops</Link>
+              <Link to="/Monitores">Monitores</Link>
             </li>
             <li>
-              <Link to="/track">Consolas</Link>
+              <Link to="/PCs">PCs</Link>
             </li>
             <li>
-              <Link to="/contact">Audio y Video</Link>
+              <Link to="/Laptops">Laptops</Link>
             </li>
             <li>
-              <Link to="/contact">Conocenos</Link>
+              <Link to="/Consolas">Consolas</Link>
+            </li>
+            <li>
+              <Link to="/Conocenos">Conocenos</Link>
             </li>
           </ul>
         </div>
