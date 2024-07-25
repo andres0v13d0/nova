@@ -33,32 +33,43 @@ const ForgotPassword = () => {
         throw new Error('Error al solicitar cambio de contraseña');
       }
 
-      setShowModal(true); // Mostrar el modal al enviar el correo
+      setShowModal(true);
     } catch (error) {
       setError('Error al solicitar cambio de contraseña');
     }
   };
 
   return (
-    <div className="login-container">
-      <h2>Olvidé mi Contraseña</h2>
-      {error && <p className="error">{error}</p>}
-      <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label htmlFor="email">Correo Electrónico:</label>
-          <input
-            type="email"
-            id="email"
-            name="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-        </div>
-        <button type="submit" className="login-button">Enviar</button>
-        <button type="button" onClick={() => history.push('/login')} className="cancel-button">Cancelar</button>
-      </form>
-      {showModal && <VerificationModal email={email} operation="resetPassword" onClose={() => setShowModal(false)} />}
+    <div className="login-page">
+      <button className="back-button" onClick={() => history.push('/login')}>
+        <i className="pi pi-arrow-left"></i>
+      </button>
+      <div className="login-container">
+        <img src="/images/logo1.png" alt="Logo" className="login-logo" />
+        <br>
+        </br>
+        {error && <p className="error">{error}</p>}
+        <form onSubmit={handleSubmit}>
+          <div className="p-inputgroup flex-1 form-group">
+            <span className="p-inputgroup-addon">
+              <i className="pi pi-envelope"></i>
+            </span>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="Correo Electrónico"
+              required
+            />
+          </div>
+          <div className="button-group">
+            <button type="submit" className="login-button">Enviar</button>
+          </div>
+        </form>
+        {showModal && <VerificationModal email={email} operation="resetPassword" onClose={() => setShowModal(false)} />}
+      </div>
     </div>
   );
 };

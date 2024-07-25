@@ -1,21 +1,19 @@
 import React, { useContext, useEffect, useState, useRef } from 'react';
-import { MyContext } from '../App'; // Asegúrate de ajustar la ruta de importación según tu estructura de archivos
+import { MyContext } from '../App';
 import './LoginStyles.css';
 import { useHistory, Link } from 'react-router-dom';
 import { InputText } from 'primereact/inputtext';
 import { Messages } from 'primereact/messages';
-import 'primereact/resources/themes/saga-blue/theme.css'; // Estilo de tema
-import 'primereact/resources/primereact.min.css'; // Estilo de componentes
-import 'primeicons/primeicons.css'; // Iconos
+import 'primereact/resources/themes/saga-blue/theme.css';
+import 'primereact/resources/primereact.min.css';
+import 'primeicons/primeicons.css';
 
 const Login = () => {
   const { setisHeaderFooterShow } = useContext(MyContext);
 
   useEffect(() => {
-    // Ocultar header y footer al montar el componente
     setisHeaderFooterShow(false);
     return () => {
-      // Mostrar header y footer al desmontar el componente
       setisHeaderFooterShow(true);
     };
   }, [setisHeaderFooterShow]);
@@ -49,7 +47,7 @@ const Login = () => {
       msgs.current.show({ severity: 'success', summary: 'Success', detail: 'Inicio de sesión exitoso' });
       setTimeout(() => {
         history.push('/');
-      }, 2000); // Redirigir después de 2 segundos
+      }, 2000);
     } catch (error) {
       msgs.current.show({ severity: 'error', summary: 'Error', detail: 'Correo electrónico o contraseña incorrectos' });
     }
@@ -61,10 +59,13 @@ const Login = () => {
 
   return (
     <div className="login-page">
+      <Messages ref={msgs} className="login-messages" />
+      <button className="back-button" onClick={handleCancel}>
+        <i className="pi pi-arrow-left"></i>
+      </button>
       <div className="login-container">
         <img src="/images/logo1.png" alt="Logo" className="login-logo" />
         <br />
-        <Messages ref={msgs} className="login-messages" /> {/* Mensajes de éxito o error */}
         {error && <p className="error">{error}</p>}
         <form onSubmit={handleSubmit}>
           <div className="p-inputgroup flex-1 form-group">
@@ -110,8 +111,7 @@ const Login = () => {
             <label htmlFor="rememberMe">Recordar contraseña</label>
           </div>
           <div className="button-group">
-            <button type="submit" className="login-button">Iniciar Sesión</button>
-            <button type="button" onClick={handleCancel} className="cancel-button">Cancelar</button>
+            <button type="submit" className="login-button">INICIAR SESION</button>
           </div>
           <div className="login-links">
             <Link to="/forgot-password">Olvidé mi contraseña</Link>
