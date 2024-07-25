@@ -7,7 +7,7 @@ const basename = path.basename(__filename);
 // Cargar las variables de entorno
 require('dotenv').config();
 
-const env = process.env.NODE_ENV || 'development';
+const env = process.env.NODE_ENV || 'production';
 const dbConfig = config[env];
 
 // Verificación de la configuración cargada
