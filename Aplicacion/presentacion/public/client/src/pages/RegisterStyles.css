@@ -5,6 +5,27 @@
   justify-content: center;
   height: 100vh;
   margin: 0;
+  position: relative;
+}
+
+.back-button {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  background: #ffffff;
+  border: none;
+  cursor: pointer;
+  border-radius: 50%;
+  padding: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.back-button i {
+  color: #007bff;
+  font-size: 16px;
 }
 
 .register-container {
@@ -49,7 +70,7 @@
 }
 
 .login-button, .cancel-button {
-  width: 48%;
+  width: 100%;
   padding: 10px 0;
   border: none;
   cursor: pointer;
@@ -96,4 +117,17 @@
   background: none;
   border: none;
   cursor: pointer;
+}
+
+.password-group .password-suggestions {
+  display: inline-block;
+  margin-left: 20px;
+}
+
+.match {
+  border-color: green;
+}
+
+.no-match {
+  border-color: red;
 }

@@ -18,6 +18,7 @@ const Register = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [direccion, setDireccion] = useState('');
   const [telefono, setTelefono] = useState('');
+  const [cedula, setCedula] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [showModal, setShowModal] = useState(false);
@@ -30,10 +31,41 @@ const Register = () => {
     };
   }, [setisHeaderFooterShow]);
 
+  const validateCedula = (cedula) => {
+    // Implementación simplificada para validar cédula ecuatoriana
+    let total = 0;
+    let longitud = cedula.length;
+    let longCheck = longitud - 1;
+
+    if (cedula !== "" && longitud === 10) {
+      for (let i = 0; i < longCheck; i++) {
+        if (i % 2 === 0) {
+          let aux = cedula.charAt(i) * 2;
+          if (aux > 9) aux -= 9;
+          total += aux;
+        } else {
+          total += parseInt(cedula.charAt(i), 10);
+        }
+      }
+
+      total = total % 10 ? 10 - total % 10 : 0;
+
+      if (cedula.charAt(longCheck) === String(total)) {
+        return true;
+      }
+    }
+    return false;
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (password !== confirmPassword) {
       setError('Las contraseñas no coinciden');
+      return;
+    }
+
+    if (!validateCedula(cedula)) {
+      setError('Cédula inválida');
       return;
     }
 
@@ -50,6 +82,7 @@ const Register = () => {
           contrasena: password,
           direccion,
           telefono,
+          cedula,
           rol: 'cliente'
         }),
       });
@@ -68,7 +101,6 @@ const Register = () => {
   const passwordHeader = <div className="font-bold mb-3">Elige una contraseña</div>;
   const passwordFooter = (
     <div className="password-suggestions">
-      <p className="mt-2">Sugerencias</p>
       <ul className="pl-2 ml-2 mt-0 line-height-3">
         <li>Al menos una letra minúscula</li>
         <li>Al menos una letra mayúscula</li>
@@ -80,9 +112,12 @@ const Register = () => {
 
   return (
     <div className="register-page">
+      <button className="back-button" onClick={() => history.push('/login')}>
+        <i className="pi pi-arrow-left"></i>
+      </button>
       <div className="register-container">
-      <img src="/images/logo1.png" alt="Logo" className="login-logo" />
-      <br></br>
+        <img src="/images/logo1.png" alt="Logo" className="login-logo" />
+        <br></br>
         {error && <p className="error">{error}</p>}
         <form onSubmit={handleSubmit}>
           <div className="p-inputgroup flex-1 form-group">
@@ -185,12 +220,22 @@ const Register = () => {
               required
             />
           </div>
-          <div className="button-group">
-            <button type="submit" className="login-button">Enviar</button>
-            <button type="button" onClick={() => history.push('/login')} className="cancel-button">Cancelar</button>
+          <div className="p-inputgroup flex-1 form-group">
+            <span className="p-inputgroup-addon">
+              <i className="pi pi-id-card"></i>
+            </span>
+            <InputText
+              id="cedula"
+              name="cedula"
+              keyfilter="int"
+              value={cedula}
+              onChange={(e) => setCedula(e.target.value)}
+              placeholder="Número de Cédula"
+              required
+            />
           </div>
-          <div className="login-links">
-            <a onClick={() => history.push('/login')}>Iniciar sesión</a>
+          <div className="button-group">
+            <button type="submit" className="login-button">REGISTRARSE</button>
           </div>
         </form>
         {showModal && <VerificationModal email={email} operation="registration" onClose={() => setShowModal(false)} />}
