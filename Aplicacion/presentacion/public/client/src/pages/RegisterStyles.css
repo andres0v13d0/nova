@@ -131,3 +131,49 @@
 .no-match {
   border-color: red;
 }
+
+.register-page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f0f0f0; /* Fondo claro para resaltar el formulario */
+}
+
+.register-container {
+  background-color: #ffffff;
+  padding: 2rem;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  max-width: 600px;
+  width: 100%; /* Para asegurarse de que tome el ancho completo hasta el máximo */
+}
+
+.register-container img {
+  display: block;
+  margin: 0 auto 1rem;
+}
+
+.form-row {
+  display: flex;
+  justify-content: space-between;
+}
+
+.form-group {
+  flex: 1;
+  margin: 0.5rem;
+}
+
+.button-group {
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+.match {
+  border-color: green;
+}
+
+.no-match {
+  border-color: red;
+}
