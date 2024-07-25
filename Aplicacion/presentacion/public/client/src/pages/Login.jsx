@@ -1,3 +1,4 @@
+// Login.jsx
 import React, { useContext, useEffect, useState, useRef } from 'react';
 import { MyContext } from '../App';
 import './LoginStyles.css';
@@ -43,10 +44,19 @@ const Login = () => {
 
       const data = await response.json();
       localStorage.setItem('token', data.token);
+      localStorage.setItem('usuarioId', data.usuario.usuarioid);
+      localStorage.setItem('usuarioNombre', data.usuario.nombre);
 
       msgs.current.show({ severity: 'success', summary: 'Success', detail: 'Inicio de sesión exitoso' });
+
       setTimeout(() => {
-        history.push('/');
+        if (data.usuario.rol === 'administrador') {
+          window.location.href = `http://localhost:3300?token=${data.token}`;
+        } else if (data.usuario.rol === 'proveedor') {
+          window.location.href = `http://localhost:3400?token=${data.token}`;
+        } else {
+          history.push('/');
+        }
       }, 2000);
     } catch (error) {
       msgs.current.show({ severity: 'error', summary: 'Error', detail: 'Correo electrónico o contraseña incorrectos' });

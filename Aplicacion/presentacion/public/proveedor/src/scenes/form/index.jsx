@@ -1,30 +1,53 @@
-import { Box, Button, TextField } from "@mui/material";
+import { Box, Button, TextField, MenuItem, Select, InputLabel, FormControl, Snackbar, Alert } from "@mui/material";
 import { Formik } from "formik";
 import * as yup from "yup";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import Header from "../../components/Header";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
 
 const Form = () => {
   const isNonMobile = useMediaQuery("(min-width:600px)");
   const [imagePreview, setImagePreview] = useState(null);
+  const [categorias, setCategorias] = useState([]);
+  const [openSnackbar, setOpenSnackbar] = useState(false);
 
-  const handleFormSubmit = async (values) => {
+  useEffect(() => {
+    const fetchCategorias = async () => {
+      try {
+        const response = await axios.get('http://localhost:3200/productosProveedor/categorias', {
+          headers: {
+            'Authorization': `Bearer ${localStorage.getItem('token')}`
+          }
+        });
+        setCategorias(response.data);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    };
+
+    fetchCategorias();
+  }, []);
+
+  const handleFormSubmit = async (values, { resetForm }) => {
     const formData = new FormData();
-    formData.append('nombre', values.nombre);
-    formData.append('precio', values.precio);
-    formData.append('descripcion', values.descripcion);
-    formData.append('categoria', values.categoria);
+    formData.append('nombreproducto', values.nombre);
+    formData.append('precioproducto', values.precio);
+    formData.append('descripcionproducto', values.descripcion);
+    formData.append('categoriaid', values.categoria);
     formData.append('imagenproducto', values.file);
 
     try {
       const response = await axios.post('http://localhost:3200/productosProveedor/agregar', formData, {
         headers: {
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
           'Content-Type': 'multipart/form-data'
         }
       });
       console.log(response.data);
+      resetForm();
+      setImagePreview(null);
+      setOpenSnackbar(true);
     } catch (error) {
       console.error("Error adding product:", error);
     }
@@ -47,6 +70,7 @@ const Form = () => {
           handleChange,
           handleSubmit,
           setFieldValue,
+          resetForm
         }) => (
           <form onSubmit={handleSubmit}>
             <Box
@@ -96,19 +120,24 @@ const Form = () => {
                 helperText={touched.descripcion && errors.descripcion}
                 sx={{ gridColumn: "span 4" }}
               />
-              <TextField
-                fullWidth
-                variant="filled"
-                type="text"
-                label="Categoría"
-                onBlur={handleBlur}
-                onChange={handleChange}
-                value={values.categoria}
-                name="categoria"
-                error={!!touched.categoria && !!errors.categoria}
-                helperText={touched.categoria && errors.categoria}
-                sx={{ gridColumn: "span 4" }}
-              />
+              <FormControl fullWidth variant="filled" sx={{ gridColumn: "span 4" }}>
+                <InputLabel id="categoria-label">Categoría</InputLabel>
+                <Select
+                  labelId="categoria-label"
+                  id="categoria"
+                  name="categoria"
+                  value={values.categoria}
+                  onChange={handleChange}
+                  onBlur={handleBlur}
+                  error={!!touched.categoria && !!errors.categoria}
+                >
+                  {categorias.map((categoria) => (
+                    <MenuItem key={categoria.categoriaid} value={categoria.categoriaid}>
+                      {categoria.nombre}
+                    </MenuItem>
+                  ))}
+                </Select>
+              </FormControl>
               <Button
                 variant="contained"
                 component="label"
@@ -146,6 +175,11 @@ const Form = () => {
           </form>
         )}
       </Formik>
+      <Snackbar open={openSnackbar} autoHideDuration={6000} onClose={() => setOpenSnackbar(false)}>
+        <Alert onClose={() => setOpenSnackbar(false)} severity="success">
+          Producto agregado exitosamente!
+        </Alert>
+      </Snackbar>
     </Box>
   );
 };

@@ -14,8 +14,17 @@ const Productos = () => {
   useEffect(() => {
     const fetchProductos = async () => {
       try {
-        const response = await axios.get('http://localhost:3200/productosProveedor/productos');
-        setProductos(response.data);
+        const token = localStorage.getItem('token');
+        const response = await axios.get('http://localhost:3200/productosProveedor/productos', {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        const productosWithId = response.data.map((producto, index) => ({
+          ...producto,
+          id: producto.id || index  // Add a unique id if not already present
+        }));
+        setProductos(productosWithId);
       } catch (error) {
         console.error("Error fetching productos:", error);
       }
@@ -25,28 +34,34 @@ const Productos = () => {
   }, []);
 
   const columns = [
-    { field: "id", headerName: "ID", flex: 0.5 },
     {
-      field: "nombre",
+      field: "nombreproducto",
       headerName: "Nombre del producto",
       flex: 1,
       cellClassName: "name-column--cell",
     },
     {
-      field: "precio",
+      field: "precioproducto",
       headerName: "Precio",
       flex: 1,
     },
     {
-      field: "descripcion",
-      headerName: "Descripcion",
+      field: "descripcionproducto",
+      headerName: "Descripción",
       flex: 3,
     },
     {
-      field: "categoria",
-      headerName: "Categoria",
-      flex: 1,
-    },
+      field: "imagenproducto",
+      headerName: "Imagen",
+      flex: 3,
+      renderCell: (params) => {
+        if (params.value) {
+          return <img src={`data:image/png;base64,${params.value}`} alt="product" width={100} />;
+        } else {
+          return null;
+        }
+      },
+    }
   ];
 
   return (
@@ -90,6 +105,7 @@ const Productos = () => {
         <DataGrid
           rows={productos}
           columns={columns}
+          getRowId={(row) => row.id}
           components={{ Toolbar: GridToolbar }}
         />
       </Box>

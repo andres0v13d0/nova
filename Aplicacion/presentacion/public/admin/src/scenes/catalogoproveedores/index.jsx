@@ -4,22 +4,35 @@ import { DataGrid } from "@mui/x-data-grid";
 import { tokens } from "../../theme";
 import Header from "../../components/Header";
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
+import axios from 'axios';
 
 const Reportes = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
 
   const [reportes] = useState([
-    { id: 1, descripcion: "Reporte del Catálogo de Productos" },
-    { id: 2, descripcion: "Reporte de Clientes Existentes" },
-    { id: 3, descripcion: "Reporte de Proveedores de la Tienda" },
-    { id: 4, descripcion: "Reporte de Ventas Realizadas" },
-    { id: 5, descripcion: "Reporte de Retroalimentaciones" },
+    { id: 1, descripcion: "Reporte del Catálogo de Productos", tipo: 'productos' },
+    { id: 2, descripcion: "Reporte de Clientes Existentes", tipo: 'clientes' },
+    { id: 3, descripcion: "Reporte de Proveedores de la Tienda", tipo: 'proveedores' },
+    { id: 4, descripcion: "Reporte de Ventas Realizadas", tipo: 'ventas' },
+    { id: 5, descripcion: "Reporte de Retroalimentaciones", tipo: 'feedback' },
   ]);
 
-  const handleGenerarReporte = (id) => {
-    // Lógica para generar el reporte
-    console.log("Generar reporte con ID:", id);
+  const handleGenerarReporte = async (tipo) => {
+    try {
+      const response = await axios.get(`http://localhost:3200/reportes/generar/${tipo}`, {
+        responseType: 'blob',
+      });
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `reporte_${tipo}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    } catch (error) {
+      console.error("Error generando reporte:", error);
+    }
   };
 
   const columns = [
@@ -38,7 +51,7 @@ const Reportes = () => {
       renderCell: (params) => (
         <IconButton
           color="primary"
-          onClick={() => handleGenerarReporte(params.row.id)}
+          onClick={() => handleGenerarReporte(params.row.tipo)}
         >
           <PictureAsPdfIcon />
         </IconButton>

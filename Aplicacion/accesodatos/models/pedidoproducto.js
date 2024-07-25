@@ -34,5 +34,16 @@ module.exports = (sequelize, DataTypes) => {
         }
     });
 
+    PedidoProducto.associate = models => {
+        PedidoProducto.belongsTo(models.producto, {
+            foreignKey: 'productoid',
+            as: 'producto'
+        });
+        PedidoProducto.belongsTo(models.pedido, {
+            foreignKey: 'pedidoid',
+            as: 'pedido'
+        });
+    };
+
     return PedidoProducto;
 };

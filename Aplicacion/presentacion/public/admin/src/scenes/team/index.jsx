@@ -4,6 +4,8 @@ import { DataGrid } from "@mui/x-data-grid";
 import { useEffect, useState } from "react";
 import { tokens } from "../../theme";
 import Header from "../../components/Header";
+import 'primeicons/primeicons.css';
+        
 
 const Team = () => {
   const theme = useTheme();
@@ -21,7 +23,9 @@ const Team = () => {
 
       if (response.ok) {
         const data = await response.json();
-        setUsers(data);
+        // Filtrar los proveedores
+        const filteredUsers = data.filter(user => user.rol !== 'proveedor');
+        setUsers(filteredUsers);
       } else {
         console.error('Error fetching users');
       }
@@ -53,7 +57,6 @@ const Team = () => {
   };
 
   const columns = [
-    { field: "usuarioid", headerName: "ID" },
     {
       field: "nombre",
       headerName: "Nombre",
@@ -88,19 +91,17 @@ const Team = () => {
     },
     {
       field: "changeRole",
-      headerName: "Cambiar Rol",
       sortable: false,
       width: 160,
       disableClickEventBubbling: true,
       renderCell: (params) => (
         <IconButton 
-          aria-label="cambiar rol" 
+          className="pi pi-arrow-right-arrow-left"
           onClick={() => handleRoleChangeClick(params.row.usuarioid, params.row.rol)}
         >
-          {params.row.rol === 'cliente' ? 'Cambiar a Administrador' : 'Cambiar a Cliente'}
         </IconButton>
       ),
-    },
+    }
   ];
 
   return (

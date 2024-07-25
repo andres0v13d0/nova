@@ -114,9 +114,35 @@ const actualizarEmpresa = async (ruc, empresaData) => {
     }
 };
 
+const listarProveedores = async () => {
+    try {
+        const proveedores = await db.empresa.findAll({
+            include: [{
+                model: db.usuario,
+                as: 'usuario',  // Especifica el alias aquí
+                where: { rol: 'proveedor' },
+                attributes: ['nombre', 'apellido']
+            }]
+        });
+
+        return proveedores.map(proveedor => ({
+            ruc: proveedor.ruc,
+            nombreempresa: proveedor.nombreempresa,
+            direccion: proveedor.direccionempresa,
+            estadoruc: proveedor.estadoruc,
+            estadoempresa: proveedor.estadoempresa,
+            nombre: proveedor.usuario.nombre + ' ' + proveedor.usuario.apellido
+        }));
+    } catch (error) {
+        console.error('Error fetching proveedores:', error);
+        throw new Error(`Error fetching proveedores: ${error.message}`);
+    }
+};
+
 module.exports = {
     registrarUsuarioYEmpresa,
     confirmarRegistro,
     buscarRuc,
-    actualizarEmpresa
+    actualizarEmpresa,
+    listarProveedores
 };

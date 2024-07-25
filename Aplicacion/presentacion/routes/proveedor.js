@@ -42,4 +42,14 @@ router.put('/actualizarEmpresa/:ruc', async (req, res) => {
     }
 });
 
+router.get('/listarProveedores', async (req, res) => {
+    try {
+        const result = await proveedorService.listarProveedores();
+        res.json(result);
+    } catch (error) {
+        console.error('Error en /listarProveedores:', error.message);
+        res.status(400).json({ error: error.message });
+    }
+});
+
 module.exports = router;

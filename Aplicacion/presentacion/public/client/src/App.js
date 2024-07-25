@@ -9,6 +9,7 @@ import Footer from "./common/footer/Footer";
 import obtenerProductos from "./components/shops/Sdata";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import RegisterSupplier from './pages/RegisterSupplier'
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import Checkout from "./pages/Checkout";
@@ -78,6 +79,9 @@ function App() {
           </Route>
           <Route path='/register' exact>
             <Register />
+          </Route>
+          <Route path='/register-supplier' exact>
+            <RegisterSupplier />
           </Route>
           <Route path='/forgot-password' exact>
             <ForgotPassword />

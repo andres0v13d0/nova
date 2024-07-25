@@ -39,6 +39,7 @@
     "paypal-rest-sdk": "^1.8.1",
     "pdf-lib": "^1.17.1",
     "pdfkit": "^0.15.0",
+    "pdfkit-construct": "^1.2.3",
     "pdfkit-table": "^0.1.99",
     "pg": "^8.12.0",
     "pg-hstore": "^2.3.4",
@@ -48,7 +49,8 @@
     "readline": "^1.3.0",
     "sequelize": "^6.37.3",
     "sharp": "^0.33.4",
-    "xml-crypto": "^6.0.0"
+    "xml-crypto": "^6.0.0",
+    "xmlbuilder2": "^3.1.1"
   },
   "devDependencies": {
     "concurrently": "^8.2.2"

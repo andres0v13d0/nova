@@ -19,7 +19,6 @@ const Register = () => {
   const [direccion, setDireccion] = useState('');
   const [telefono, setTelefono] = useState('');
   const [cedula, setCedula] = useState('');
-  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [showModal, setShowModal] = useState(false);
   const history = useHistory();
@@ -223,6 +222,9 @@ const Register = () => {
           
           <div className="button-group">
             <button type="submit" className="login-button">REGISTRARSE</button>
+            <button type="button" className="supplier-button" onClick={() => history.push('/register-supplier')}>
+              Registrarse como Proveedor
+            </button>
           </div>
         </form>
         {showModal && <VerificationModal email={email} operation="registration" onClose={() => setShowModal(false)} />}

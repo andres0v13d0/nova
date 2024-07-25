@@ -1,14 +1,33 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box } from "@mui/material";
 import { DataGrid, GridToolbar } from "@mui/x-data-grid";
 import { tokens } from "../../theme";
-import { mockDataContacts } from "../../data/mockData";
 import Header from "../../components/Header";
 import { useTheme } from "@mui/material";
+import axios from 'axios';
 
 const Contacts = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
+  const [rows, setRows] = useState([]);
+
+  useEffect(() => {
+    const fetchProveedores = async () => {
+      try {
+        const response = await axios.get('http://localhost:3200/proveedor/listarProveedores');
+        // Añade una propiedad id a cada fila usando el valor de ruc
+        const proveedoresConId = response.data.map(proveedor => ({
+          ...proveedor,
+          id: proveedor.ruc
+        }));
+        setRows(proveedoresConId);
+      } catch (error) {
+        console.error('Error fetching proveedores:', error);
+      }
+    };
+
+    fetchProveedores();
+  }, []);
 
   const columns = [
     { field: "ruc", headerName: "RUC", flex: 0.5 },
@@ -76,7 +95,7 @@ const Contacts = () => {
         }}
       >
         <DataGrid
-          rows={mockDataContacts}
+          rows={rows}
           columns={columns}
           components={{ Toolbar: GridToolbar }}
         />
