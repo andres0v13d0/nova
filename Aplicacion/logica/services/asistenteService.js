@@ -28,7 +28,7 @@ const sendMessage  = async (chatSession, userMessage) => {
       messages: [
         {
           role: "system",
-          content: `Eres un asistente de tienda en línea que ofrece recomendaciones de productos. Responde de forma útil y adecuada a las preguntas sobre los productos disponibles.
+          content: `Eres un asistente de tienda en línea que ofrece recomendaciones de productos. Responde de forma útil y adecuada a las preguntas sobre los productos disponibles, si te hacen una pregunta sobre otro tema que no sea sobre los productos o sobre la tienda dile al usuario que no puedes responder eso porque es de otro contexto.
           Ofreces estos productos: \n${productosLista}`
         },
         {
