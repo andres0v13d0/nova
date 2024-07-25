@@ -1,103 +1,57 @@
-.card {
-    padding: 2rem;
-  }
-  
-  .flex {
+.product-item {
     display: flex;
-  }
-  
-  .flex-column {
-    flex-direction: column;
-  }
-  
-  .flex-row {
-    flex-direction: row;
-  }
-  
-  .xl\\:flex-row {
-    flex-direction: row;
-  }
-  
-  .xl\\:align-items-start {
-    align-items: flex-start;
-  }
-  
-  .p-4 {
-    padding: 1rem;
-  }
-  
-  .gap-4 {
-    gap: 1rem;
-  }
-  
-  .w-9 {
-    width: 90%;
-  }
-  
-  .sm\\:w-16rem {
-    width: 16rem;
-  }
-  
-  .xl\\:w-10rem {
-    width: 10rem;
-  }
-  
-  .shadow-2 {
-    box-shadow: 0 0 0.5rem rgba(0, 0, 0, 0.2);
-  }
-  
-  .block {
-    display: block;
-  }
-  
-  .mx-auto {
-    margin-left: auto;
-    margin-right: auto;
-  }
-  
-  .border-round {
-    border-radius: 0.5rem;
-  }
-  
-  .text-2xl {
-    font-size: 1.5rem;
-  }
-  
-  .font-bold {
-    font-weight: bold;
-  }
-  
-  .text-900 {
-    color: #212121;
-  }
-  
-  .text-700 {
-    color: #757575;
-  }
-  
-  .align-items-center {
     align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
   }
   
-  .gap-2 {
-    gap: 0.5rem;
+  .product-img img {
+    width: 100px;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 5px;
   }
   
-  .text-2xl {
+  .product-info {
+    flex: 1;
+    margin-left: 20px;
+  }
+  
+  .product-info h3 {
+    margin: 0 0 10px 0;
     font-size: 1.5rem;
   }
   
-  .font-semibold {
-    font-weight: 600;
+  .product-info p {
+    margin: 0 0 10px 0;
+    color: #666;
   }
   
-  .p-button-info {
-    background-color: #17a2b8;
-    border-color: #17a2b8;
+  .product-category {
+    display: flex;
+    align-items: center;
+    margin: 10px 0;
   }
   
-  .p-button-info:hover {
-    background-color: #138496;
-    border-color: #138496;
+  .product-category .pi {
+    margin-right: 5px;
   }
-      
+  
+  .product-price {
+    font-size: 1.5rem;
+    color: #333;
+    font-weight: bold;
+    margin: 10px 0;
+  }
+  
+  .product-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+  }
+  
+  .header {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
