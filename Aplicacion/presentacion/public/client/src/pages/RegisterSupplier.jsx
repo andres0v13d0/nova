@@ -36,7 +36,7 @@ const RegisterSupplier = () => {
     if (e.key === 'Enter') {
       e.preventDefault();
       try {
-        const response = await fetch(`http://localhost:3200/validate-ruc/${ruc}`);
+        const response = await fetch(`http://localhost:3200/buscarRuc/${ruc}`);
         if (!response.ok) {
           throw new Error('Error al validar el RUC');
         }
