@@ -58,7 +58,7 @@
         <h2>Carrito de Compras</h2>
         <div id="carrito-container"></div>
         <button onclick="finalizarCompra()">Finalizar Compra</button>
-        <button onclick="marcarPedidoRecibido()">Pedido Recibido</button>
+        <button onclick="window.location.href='markOrderReceived.html'">Marcar Pedido Recibido</button>
     </div>
 
     <script>
@@ -133,7 +133,7 @@
             const tbody = document.createElement('tbody');
             const headerRow = document.createElement('tr');
 
-            const columns = ['Nombre', 'Descripcion', 'Precio', 'Categoría', 'Empresa', 'Dueño', 'Acciones'];
+            const columns = [ 'Nombre', 'Descripción', 'Precio', 'Imagen','Categoría', 'Empresa', 'Dueño', 'Acciones'];
             columns.forEach(column => {
                 const th = document.createElement('th');
                 th.textContent = column;
@@ -148,20 +148,30 @@
                 columns.forEach(column => {
                     const td = document.createElement('td');
                     switch(column) {
+                        case 'Imagen':
+                            td.innerHTML = `<img src="data:image/png;base64,${producto.imagenproducto}" alt="${producto.nombreproducto}" width="50" height="50">`;
+                            break;
+                        case 'Nombre':
+                            td.textContent = producto.nombreproducto;
+                            break;
+                        case 'Descripción':
+                            td.textContent = producto.descripcionproducto;
+                            break;
+                        case 'Precio':
+                            td.textContent = producto.precioproducto;
+                            break;
                         case 'Categoría':
-                            td.textContent = producto.categoria.nombre;
+                            td.textContent = producto.categoria ? producto.categoria.nombre : 'N/A';
                             break;
                         case 'Empresa':
-                            td.textContent = producto.proveedor.empresa.nombreempresa;
+                            td.textContent = producto.proveedor && producto.proveedor.empresa ? producto.proveedor.empresa.nombreempresa : 'N/A';
                             break;
                         case 'Dueño':
-                            td.textContent = producto.proveedor.nombre;
+                            td.textContent = producto.proveedor ? producto.proveedor.nombre : 'N/A';
                             break;
                         case 'Acciones':
                             td.innerHTML = `<button onclick='agregarAlCarrito(${JSON.stringify(producto)})'>Agregar al Carrito</button>`;
                             break;
-                        default:
-                            td.textContent = producto[mapColumnName(column)];
                     }
                     row.appendChild(td);
                 });
@@ -176,7 +186,7 @@
         function mapColumnName(column) {
             const columnMapping = {
                 'Nombre': 'nombreproducto',
-                'Descripcion': 'descripcionproducto',
+                'Descripción': 'descripcionproducto',
                 'Precio': 'precioproducto'
             };
             return columnMapping[column] || column.toLowerCase();
@@ -194,7 +204,7 @@
 
             const productosFiltrados = productos.filter(producto => {
                 const categoriaMatch = !categoriaId || producto.categoriaid == categoriaId;
-                const empresaMatch = !empresaId || producto.proveedor.empresa.usuarioid == empresaId;
+                const empresaMatch = !empresaId || (producto.proveedor && producto.proveedor.empresa && producto.proveedor.empresa.usuarioid == empresaId);
                 return categoriaMatch && empresaMatch;
             });
 
@@ -267,28 +277,6 @@
                 }
 
                 alert('Compra finalizada exitosamente');
-                carrito = [];
-                mostrarCarrito();
-            } catch (error) {
-                document.getElementById('error-container').textContent = error.message;
-            }
-        }
-
-        async function marcarPedidoRecibido() {
-            try {
-                const response = await fetch('/compras/recibido', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${localStorage.getItem('token')}`
-                    }
-                });
-
-                if (!response.ok) {
-                    throw new Error(await response.text());
-                }
-
-                alert('Pedido marcado como recibido exitosamente');
                 carrito = [];
                 mostrarCarrito();
             } catch (error) {
