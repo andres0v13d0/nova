@@ -9,7 +9,7 @@ import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
 
 const Login = () => {
-  const { setisHeaderFooterShow } = useContext(MyContext);
+  const { setisHeaderFooterShow, setUser } = useContext(MyContext);
 
   useEffect(() => {
     setisHeaderFooterShow(false);
@@ -43,6 +43,7 @@ const Login = () => {
 
       const data = await response.json();
       localStorage.setItem('token', data.token);
+      setUser({ name: data.name, role: data.role }); // Establece el nombre del usuario y el rol en el contexto
 
       msgs.current.show({ severity: 'success', summary: 'Success', detail: 'Inicio de sesión exitoso' });
       setTimeout(() => {
@@ -53,14 +54,10 @@ const Login = () => {
     }
   };
 
-  const handleCancel = () => {
-    history.push('/');
-  };
-
   return (
     <div className="login-page">
       <Messages ref={msgs} className="login-messages" />
-      <button className="back-button" onClick={handleCancel}>
+      <button className="back-button" onClick={() => history.push('/')}>
         <i className="pi pi-arrow-left"></i>
       </button>
       <div className="login-container">
@@ -124,3 +121,4 @@ const Login = () => {
 };
 
 export default Login;
+  

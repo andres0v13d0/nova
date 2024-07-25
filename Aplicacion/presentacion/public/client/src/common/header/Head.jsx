@@ -1,6 +1,10 @@
-import React from "react"
+import React, { useContext } from "react";
+import { MyContext } from '../../App';
+
 
 const Head = () => {
+  const { user } = useContext(MyContext);
+
   return (
     <>
       <section className='head'>
@@ -13,11 +17,12 @@ const Head = () => {
           </div>
           <div className='right row RText'>
             <label>¿Necesitas Ayuda?</label>
+            {user && <label>{user.name}</label>}
           </div>
         </div>
       </section>
     </>
-  )
-}
+  );
+};
 
-export default Head
+export default Head;

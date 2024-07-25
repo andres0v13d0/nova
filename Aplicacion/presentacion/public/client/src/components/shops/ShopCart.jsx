@@ -1,9 +1,19 @@
 import React, { useState } from "react";
+import { Sidebar } from 'primereact/sidebar';
+import { Button } from 'primereact/button';
 
 const ShopCart = ({ shopItems, addToCart }) => {
   const [count, setCount] = useState(0);
+  const [visible, setVisible] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(null);
+
   const increment = () => {
     setCount(count + 1);
+  };
+
+  const showDetails = (item) => {
+    setSelectedItem(item);
+    setVisible(true);
   };
 
   return (
@@ -26,6 +36,7 @@ const ShopCart = ({ shopItems, addToCart }) => {
                   <button onClick={() => addToCart(shopItem)}>
                     <i className='fa fa-plus'></i>
                   </button>
+                  <Button icon="pi pi-info" label="Detalles" onClick={() => showDetails(shopItem)} className="p-button-info" />
                 </div>
               </div>
             </div>
@@ -34,6 +45,17 @@ const ShopCart = ({ shopItems, addToCart }) => {
       ) : (
         <p>No hay productos disponibles</p>
       )}
+      <Sidebar visible={visible} onHide={() => setVisible(false)}>
+        {selectedItem && (
+          <>
+            <h2>{selectedItem.name}</h2>
+            <p>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. 
+              Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+            </p>
+          </>
+        )}
+      </Sidebar>
     </>
   );
 };
