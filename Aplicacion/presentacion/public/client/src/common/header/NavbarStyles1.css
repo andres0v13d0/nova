@@ -1,0 +1,136 @@
+/* Estilos específicos para el componente Navbar */
+
+.header {
+    background: #fff;
+    padding: 10px 0;
+    box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.1);
+  }
+  
+  .header .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 15px;
+    display: flex;
+    justify-content: center; /* Centra el contenido horizontalmente */
+  }
+  
+  .header .d_flex {
+    display: flex;
+    align-items: center;
+  }
+  
+  .header .navlink {
+    flex-grow: 1;
+    text-align: center; /* Centra el texto dentro del contenedor */
+  }
+  
+  .header .link {
+    display: flex;
+    justify-content: center;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .header .link li {
+    margin: 0 15px;
+  }
+  
+  .header .link li a {
+    text-decoration: none;
+    color: #333;
+    font-weight: 500;
+  }
+  
+  .header .link li a:hover {
+    color: #007bff;
+  }
+  
+  .header .sub-menu {
+    display: none;
+    position: absolute;
+    background: white;
+    box-shadow: 0px 8px 16px rgba(26, 99, 182, 0.8);
+    z-index: 1;
+    width: 200px;
+  }
+  
+  .header .navlink li:hover .sub-menu {
+    display: block;
+  }
+  
+  .header .sub-menu li {
+    padding: 10px;
+  }
+  
+  .header .sub-menu li a {
+    color: black;
+    text-decoration: none;
+  }
+  
+  .header .sub-menu li a:hover {
+    text-decoration: underline;
+  }
+  
+  .header .nav-links-MobileMenu {
+    display: none;
+  }
+  
+  @media (max-width: 768px) {
+    .header .container {
+      justify-content: space-between;
+    }
+  
+    .header .navlink {
+      flex-grow: 1;
+      text-align: right;
+    }
+  
+    .header .link {
+      flex-direction: column;
+      align-items: flex-start;
+      position: absolute;
+      top: 60px;
+      right: 0;
+      background: white;
+      width: 100%;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.3s ease-in;
+    }
+  
+    .header .link li {
+      margin: 15px 0;
+    }
+  
+    .header .link li a {
+      font-size: 18px;
+    }
+  
+    .header .nav-links-MobileMenu {
+      display: block;
+      max-height: 300px;
+    }
+  
+    .header .toggle {
+      display: block;
+      cursor: pointer;
+    }
+  
+    .header .toggle .open {
+      display: block;
+    }
+  
+    .header .toggle .close {
+      display: none;
+    }
+  
+    .header .nav-links-MobileMenu .close {
+      display: block;
+    }
+  
+    .header .nav-links-MobileMenu .open {
+      display: none;
+    }
+  }
+  

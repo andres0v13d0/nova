@@ -22,8 +22,9 @@ const Pages = ({ productItems, addToCart, CartItem, shopItems }) => {
 
   return (
     <>
-      <Home CartItem={CartItem} />
+      
       <Shop shopItems={shopItems} addToCart={addToCart} />
+      <Home CartItem={CartItem} />
       <Annocument />
       <Wrapper />
       {showModal && (
